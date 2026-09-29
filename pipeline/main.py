@@ -5,6 +5,7 @@ from pathlib import Path
 
 import boto3
 import duckdb
+import psycopg
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from openai import (
@@ -12,6 +13,7 @@ from openai import (
     AuthenticationError,
     BadRequestError,
 )
+from psycopg.types.json import Jsonb
 from tavily import AsyncTavilyClient
 from tavily.errors import BadRequestError as TavilyBadRequestError
 from tavily.errors import (
@@ -32,6 +34,11 @@ def run():
     tavily_key = os.environ["TAVILY_KEY"]
     nebius_key = os.environ["NEBIUS_KEY"]
     bucket = os.environ["S3_BUCKET"]
+    user = os.environ["PG_USER"]
+    password = os.environ["PG_PASSWORD"]
+    host = os.environ["PG_HOST"]
+    port = os.environ["PG_PORT"]
+    name = os.environ["PG_NAME"]
 
     data_dir = Path(__file__).resolve().parent.parent / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
@@ -68,6 +75,14 @@ def run():
         if limit:
             rows = rows[:limit]
 
+        load_rows = con.execute(f"""
+            SELECT fsq_place_id, name, address, locality, district,
+                latitude, longitude, fsq_category_labels
+            FROM '{parquet}'
+        """).fetchall()
+        if limit:
+            load_rows = load_rows[:limit]
+
     s3 = boto3.client("s3")
     done_sources = existing_ids(s3, bucket, "sources/")
 
@@ -95,6 +110,12 @@ def run():
             s3, bucket, nebius, prompt, schema, rows, done_sources, done_profiles
         )
     )
+
+    profiles = build_profiles(s3, bucket, load_rows, locality_zh)
+
+    db = f"postgres://{user}:{password}@{host}:{port}/{name}?sslmode=disable"
+    with psycopg.connect(db) as conn:
+        save_profiles(conn, profiles)
 
 
 def save_places(con, token):
@@ -196,6 +217,19 @@ def existing_ids(s3, bucket, prefix):
     return ids
 
 
+def normalize_locality(locality, transl):
+    if not locality:
+        return None
+    loc = locality.strip().strip(",").lower()
+    loc = loc.removesuffix(", hong kong").removesuffix(" district")
+    if loc in transl:
+        return loc
+    for en, zh in transl.items():
+        if loc == zh or loc == zh + "區":
+            return en
+    return None
+
+
 def bucket_upload(s3, bucket, key, data):
     try:
         s3.put_object(
@@ -213,19 +247,8 @@ def bucket_upload(s3, bucket, key, data):
 async def fetch_source(s3, bucket, tavily, sem, row, transl):
     id, name, local, dist, _ = row
 
-    if local is not None:
-        local_clean = local.strip().strip(",").lower()
-        if local_clean in transl:
-            local_clean = transl[local_clean]
-        elif any(
-            "\u4e00" <= c <= "\u9fff" or "\u3400" <= c <= "\u4dbf" for c in local_clean
-        ) and not local_clean.endswith("區"):
-            pass  # keep cjk
-        else:
-            local_clean = dist
-    else:
-        local_clean = dist
-
+    key = normalize_locality(local, transl)
+    local_clean = transl[key] if key else dist
     query = f"{name} {local_clean}"
 
     async with sem:
@@ -397,6 +420,62 @@ async def write_profiles(
     ]
 
     await asyncio.gather(*tasks)
+
+
+def build_profiles(s3, bucket, rows, transl):
+    done = existing_ids(s3, bucket, "profiles/")
+    profiles = []
+
+    for id, name, address, locality, district, lat, lon, labels in rows:
+        if id not in done:
+            continue
+
+        obj = s3.get_object(Bucket=bucket, Key=f"profiles/{id}.json")
+        profile = json.loads(obj["Body"].read())
+        if not profile["is_match"]:
+            continue
+
+        dining = next((l for l in labels if l.startswith("Dining and Drinking")), None)
+        category = dining.split(" > ")[-1]
+
+        key = normalize_locality(locality, transl)
+        area = key.title() if key else district.removesuffix(" District")
+
+        profiles.append(
+            (
+                id,
+                name,
+                category,
+                address or "",
+                area,
+                Jsonb(profile["answers"]),
+                profile["price_level"],
+                lat,
+                lon,
+            )
+        )
+
+    return profiles
+
+
+def save_profiles(conn, profiles):
+    conn.cursor().executemany(
+        """
+        INSERT INTO restaurants
+            (fsq_id, name, category, address, area, answers, price_level, lat, lon)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (fsq_id) DO UPDATE SET
+            name = EXCLUDED.name,
+            category = EXCLUDED.category,
+            address = EXCLUDED.address,
+            area = EXCLUDED.area,
+            answers = EXCLUDED.answers,
+            price_level = EXCLUDED.price_level,
+            lat = EXCLUDED.lat,
+            lon = EXCLUDED.lon
+        """,
+        profiles,
+    )
 
 
 if __name__ == "__main__":
