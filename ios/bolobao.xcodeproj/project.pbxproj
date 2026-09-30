@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D426806306D479200884316 /* bolobao-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D426805306D479200884316 /* bolobao-Info.plist */; };
 		6DF849B130549DD3000BB966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AC30549DD3000BB966 /* ContentView.swift */; };
-		6DF849B230549DD3000BB966 /* munchmaxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AE30549DD3000BB966 /* munchmaxApp.swift */; };
+		6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AE30549DD3000BB966 /* bolobaoApp.swift */; };
 		6DF849B330549DD3000BB966 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DF849AB30549DD3000BB966 /* Assets.xcassets */; };
 		6DF849C03054C751000BB966 /* Local.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6DF849BF3054C751000BB966 /* Local.xcconfig */; };
 		6DF849C43054C799000BB966 /* Local.xcconfig.example in Resources */ = {isa = PBXBuildFile; fileRef = 6DF849C33054C799000BB966 /* Local.xcconfig.example */; };
@@ -21,12 +22,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6DF8499D30549952000BB966 /* munchmax.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = munchmax.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D426805306D479200884316 /* bolobao-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "bolobao-Info.plist"; sourceTree = "<group>"; };
+		6DF8499D30549952000BB966 /* bolobao.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bolobao.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF849AB30549DD3000BB966 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6DF849AC30549DD3000BB966 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		6DF849AD30549DD3000BB966 /* munchmax.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = munchmax.xcodeproj; sourceTree = "<group>"; };
-		6DF849AE30549DD3000BB966 /* munchmaxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = munchmaxApp.swift; sourceTree = "<group>"; };
-		6DF849BB3054BF43000BB966 /* munchmax-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "munchmax-Info.plist"; sourceTree = "<group>"; };
+		6DF849AE30549DD3000BB966 /* bolobaoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bolobaoApp.swift; sourceTree = "<group>"; };
 		6DF849BF3054C751000BB966 /* Local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig; sourceTree = "<group>"; };
 		6DF849C33054C799000BB966 /* Local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text; path = Local.xcconfig.example; sourceTree = "<group>"; };
 		6DF849C530559D51000BB966 /* openapi-generator-config.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; name = "openapi-generator-config.yaml"; path = "../openapi-generator-config.yaml"; sourceTree = "<group>"; };
@@ -55,13 +55,12 @@
 				6DF849D93055A739000BB966 /* Features */,
 				6DF849C630559D51000BB966 /* openapi.yaml */,
 				6DF849C530559D51000BB966 /* openapi-generator-config.yaml */,
-				6DF849BB3054BF43000BB966 /* munchmax-Info.plist */,
 				6DF849AB30549DD3000BB966 /* Assets.xcassets */,
 				6DF849AC30549DD3000BB966 /* ContentView.swift */,
 				6DF849BF3054C751000BB966 /* Local.xcconfig */,
 				6DF849C33054C799000BB966 /* Local.xcconfig.example */,
-				6DF849AD30549DD3000BB966 /* munchmax.xcodeproj */,
-				6DF849AE30549DD3000BB966 /* munchmaxApp.swift */,
+				6DF849AE30549DD3000BB966 /* bolobaoApp.swift */,
+				6D426805306D479200884316 /* bolobao-Info.plist */,
 				6DF8499E30549952000BB966 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -69,13 +68,8 @@
 		6DF8499E30549952000BB966 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6DF8499D30549952000BB966 /* munchmax.app */,
+				6DF8499D30549952000BB966 /* bolobao.app */,
 			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		6DF849AF30549DD3000BB966 /* Products */ = {
-			isa = PBXGroup;
 			name = Products;
 			sourceTree = "<group>";
 		};
@@ -106,9 +100,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6DF8499C30549952000BB966 /* munchmax */ = {
+		6DF8499C30549952000BB966 /* bolobao */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6DF849A830549953000BB966 /* Build configuration list for PBXNativeTarget "munchmax" */;
+			buildConfigurationList = 6DF849A830549953000BB966 /* Build configuration list for PBXNativeTarget "bolobao" */;
 			buildPhases = (
 				6DF8499930549952000BB966 /* Sources */,
 				6DF8499A30549952000BB966 /* Frameworks */,
@@ -119,13 +113,13 @@
 			dependencies = (
 				6DF849D330559ECF000BB966 /* PBXTargetDependency */,
 			);
-			name = munchmax;
+			name = bolobao;
 			packageProductDependencies = (
 				6DF849CD30559E70000BB966 /* OpenAPIURLSession */,
 				6DF849D030559E83000BB966 /* OpenAPIRuntime */,
 			);
-			productName = munchmax;
-			productReference = 6DF8499D30549952000BB966 /* munchmax.app */;
+			productName = bolobao;
+			productReference = 6DF8499D30549952000BB966 /* bolobao.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -144,7 +138,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 6DF8499830549952000BB966 /* Build configuration list for PBXProject "munchmax" */;
+			buildConfigurationList = 6DF8499830549952000BB966 /* Build configuration list for PBXProject "bolobao" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -161,15 +155,9 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6DF8499E30549952000BB966 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 6DF849AF30549DD3000BB966 /* Products */;
-					ProjectRef = 6DF849AD30549DD3000BB966 /* munchmax.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
-				6DF8499C30549952000BB966 /* munchmax */,
+				6DF8499C30549952000BB966 /* bolobao */,
 			);
 		};
 /* End PBXProject section */
@@ -182,6 +170,7 @@
 				6DF849C03054C751000BB966 /* Local.xcconfig in Resources */,
 				6DF849C43054C799000BB966 /* Local.xcconfig.example in Resources */,
 				6DF849B330549DD3000BB966 /* Assets.xcassets in Resources */,
+				6D426806306D479200884316 /* bolobao-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,7 +185,7 @@
 				6DF849DF3055AA9C000BB966 /* Discovery.swift in Sources */,
 				6DF849C830559D51000BB966 /* openapi.yaml in Sources */,
 				6DF849B130549DD3000BB966 /* ContentView.swift in Sources */,
-				6DF849B230549DD3000BB966 /* munchmaxApp.swift in Sources */,
+				6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */,
 				6DF849EC3055B5E1000BB966 /* Config.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,8 +330,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "munchmax-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_FILE = "bolobao-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = bolobao;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -353,7 +342,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = denzel.munchmax;
+				PRODUCT_BUNDLE_IDENTIFIER = mitskiyu.bolobao;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -372,8 +361,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "munchmax-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_FILE = "bolobao-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = bolobao;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -384,7 +373,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = denzel.munchmax;
+				PRODUCT_BUNDLE_IDENTIFIER = mitskiyu.bolobao;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -395,7 +384,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6DF8499830549952000BB966 /* Build configuration list for PBXProject "munchmax" */ = {
+		6DF8499830549952000BB966 /* Build configuration list for PBXProject "bolobao" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6DF849A630549953000BB966 /* Debug */,
@@ -404,7 +393,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6DF849A830549953000BB966 /* Build configuration list for PBXNativeTarget "munchmax" */ = {
+		6DF849A830549953000BB966 /* Build configuration list for PBXNativeTarget "bolobao" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6DF849A930549953000BB966 /* Debug */,

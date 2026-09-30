@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: munchmax
+  title: bolobao
   version: 0.0.1
 paths:
   /restaurants:

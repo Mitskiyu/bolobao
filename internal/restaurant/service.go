@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"uuid"
 
-	"munchmax/internal/database"
+	"bolobao/internal/database"
 )
 
 type store interface {

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"uuid"
 
-	"munchmax/internal/httpx"
+	"bolobao/internal/httpx"
 )
 
 const (

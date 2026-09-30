@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"munchmax/internal/database"
-	"munchmax/internal/restaurant"
-	"munchmax/internal/server"
+	"bolobao/internal/database"
+	"bolobao/internal/restaurant"
+	"bolobao/internal/server"
 
 	"github.com/joho/godotenv"
 )

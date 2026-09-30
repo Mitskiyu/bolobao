@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct munchmaxApp: App {
+struct bolobaoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"munchmax/internal/restaurant"
+	"bolobao/internal/restaurant"
 )
 
 type Handlers struct {
