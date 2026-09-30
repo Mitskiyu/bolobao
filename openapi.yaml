@@ -59,44 +59,69 @@ components:
     restaurant:
       type: object
       required:
-        [
-          id,
-          name,
-          kind,
-          cuisines,
-          street,
-          housenumber,
-          postcode,
-          city,
-          website,
-          phone,
-          opening_hours,
-        ]
+        [id, name, category, address, area, lat, lon, price_level, answers]
       properties:
         id:
           type: string
           format: uuid
         name:
           type: string
-        kind:
+        category:
           type: string
-        cuisines:
+        address:
+          type: string
+        area:
+          type: string
+        lat:
+          type: number
+          format: double
+        lon:
+          type: number
+          format: double
+        price_level:
+          type: [integer, "null"]
+          minimum: 1
+          maximum: 4
+        answers:
           type: array
           items:
-            type: string
-        street:
+            $ref: "#/components/schemas/answer"
+
+    answer:
+      type: object
+      required: [prompt, text, source_url]
+      properties:
+        prompt:
           type: string
-        housenumber:
+          enum:
+            [
+              best_dish,
+              what_to_order_first,
+              order_this_if_its_your_second_time,
+              order_this_not_that,
+              what_to_skip,
+              known_for,
+              portion_size,
+              value_for_money,
+              worth_the_queue,
+              wait_time,
+              busy,
+              need_to_book,
+              opening_hours,
+              best_time,
+              breakfast,
+              service,
+              how_old,
+              cash_only,
+              share_table,
+              getting_there,
+              spice_level,
+              drinks,
+              room_vibe,
+            ]
+        text:
           type: string
-        postcode:
-          type: string
-        city:
-          type: string
-        website:
-          type: string
-        phone:
-          type: string
-        opening_hours:
+        source_url:
           type: string
 
     errorResponse:

@@ -49,7 +49,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	rests, err := h.service.list(ctx, cur, limit)
 	if err != nil {
 		log.Printf("%v at %s", err, r.URL)
-		httpx.Error(w, "INTERNAL", "internal server error", http.StatusInternalServerError)
+		httpx.Error(w, "INTERNAL_ERROR", "internal server error", http.StatusInternalServerError)
 		return
 	}
 
