@@ -17,7 +17,7 @@ struct Discovery: View {
             VStack(alignment: .leading) {
                 Text(r.name)
                     .font(.headline)
-                Text(r.kind)
+                Text(r.address)
             }
         }.task {
             do {
