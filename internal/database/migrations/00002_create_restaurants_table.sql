@@ -8,7 +8,7 @@ CREATE TABLE restaurants (
     address     TEXT NOT NULL DEFAULT '',
     area        TEXT NOT NULL,
     answers     JSONB NOT NULL,
-    price_level INT,
+    price_level INT CHECK (price_level BETWEEN 1 and 4),
     lat         DOUBLE PRECISION NOT NULL,
     lon         DOUBLE PRECISION NOT NULL,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
