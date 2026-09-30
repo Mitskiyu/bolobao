@@ -7,13 +7,13 @@ package database
 
 import (
 	"context"
-
 	"uuid"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const listRestaurants = `-- name: ListRestaurants :many
-SELECT id, name, kind, cuisines, street, housenumber, 
-    postcode, city, website, phone, opening_hours
+SELECT id, name, category, address, area, answers, price_level, lat, lon
 FROM restaurants
 WHERE id > $1
 ORDER BY id
@@ -26,17 +26,15 @@ type ListRestaurantsParams struct {
 }
 
 type ListRestaurantsRow struct {
-	ID           uuid.UUID
-	Name         string
-	Kind         string
-	Cuisines     []string
-	Street       string
-	Housenumber  string
-	Postcode     string
-	City         string
-	Website      string
-	Phone        string
-	OpeningHours string
+	ID         uuid.UUID
+	Name       string
+	Category   string
+	Address    string
+	Area       string
+	Answers    []byte
+	PriceLevel pgtype.Int4
+	Lat        float64
+	Lon        float64
 }
 
 func (q *Queries) ListRestaurants(ctx context.Context, arg ListRestaurantsParams) ([]ListRestaurantsRow, error) {
@@ -51,15 +49,13 @@ func (q *Queries) ListRestaurants(ctx context.Context, arg ListRestaurantsParams
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
-			&i.Kind,
-			&i.Cuisines,
-			&i.Street,
-			&i.Housenumber,
-			&i.Postcode,
-			&i.City,
-			&i.Website,
-			&i.Phone,
-			&i.OpeningHours,
+			&i.Category,
+			&i.Address,
+			&i.Area,
+			&i.Answers,
+			&i.PriceLevel,
+			&i.Lat,
+			&i.Lon,
 		); err != nil {
 			return nil, err
 		}

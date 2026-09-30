@@ -5,25 +5,22 @@
 package database
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
 	"uuid"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Restaurant struct {
-	ID           uuid.UUID
-	OsmID        string
-	Name         string
-	Kind         string
-	Cuisines     []string
-	Street       string
-	Housenumber  string
-	Postcode     string
-	City         string
-	Website      string
-	Phone        string
-	OpeningHours string
-	Lat          float64
-	Lon          float64
-	CreatedAt    pgtype.Timestamptz
-	ModifiedAt   pgtype.Timestamptz
+	ID         uuid.UUID
+	FsqID      string
+	Name       string
+	Category   string
+	Address    string
+	Area       string
+	Answers    []byte
+	PriceLevel pgtype.Int4
+	Lat        float64
+	Lon        float64
+	CreatedAt  pgtype.Timestamptz
+	ModifiedAt pgtype.Timestamptz
 }

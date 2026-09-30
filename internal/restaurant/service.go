@@ -2,6 +2,8 @@ package restaurant
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"uuid"
 
 	"munchmax/internal/database"
@@ -34,8 +36,35 @@ func (s *Service) list(ctx context.Context, cursor uuid.UUID, limit int) ([]rest
 
 	out := make([]restaurant, 0, len(rests))
 	for _, r := range rests {
-		out = append(out, restaurant(r))
+		rest, err := fromRow(r)
+		if err != nil {
+			return nil, fmt.Errorf("failed to conv restaurant %s: %w", r.ID, err)
+		}
+		out = append(out, rest)
 	}
 
 	return out, nil
+}
+
+func fromRow(row database.ListRestaurantsRow) (restaurant, error) {
+	r := restaurant{
+		ID:       row.ID,
+		Name:     row.Name,
+		Category: row.Category,
+		Address:  row.Address,
+		Area:     row.Area,
+		Lat:      row.Lat,
+		Lon:      row.Lon,
+	}
+
+	if row.PriceLevel.Valid {
+		p := int(row.PriceLevel.Int32)
+		r.PriceLevel = &p
+	}
+
+	if err := json.Unmarshal(row.Answers, &r.Answers); err != nil {
+		return restaurant{}, fmt.Errorf("unmarshal answers: %w", err)
+	}
+
+	return r, nil
 }
