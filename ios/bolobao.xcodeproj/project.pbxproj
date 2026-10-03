@@ -47,6 +47,11 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
+		6D2A08753070A7B6004F0DBE /* Preview Content */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +70,7 @@
 		6DF8499430549952000BB966 = {
 			isa = PBXGroup;
 			children = (
+				6D2A08753070A7B6004F0DBE /* Preview Content */,
 				6D2A08543070953F004F0DBE /* Networking */,
 				6DF849E63055AEEC000BB966 /* Core */,
 				6DF849D93055A739000BB966 /* Features */,
@@ -133,6 +139,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				6D2A08543070953F004F0DBE /* Networking */,
+				6D2A08753070A7B6004F0DBE /* Preview Content */,
 			);
 			name = bolobao;
 			packageProductDependencies = (
@@ -352,6 +359,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "bolobao-Info.plist";
@@ -383,6 +391,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "bolobao-Info.plist";
