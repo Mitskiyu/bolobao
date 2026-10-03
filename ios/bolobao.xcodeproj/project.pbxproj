@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D2A082C306D7DAD004F0DBE /* Discovery+Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2A082A306D7D6D004F0DBE /* Discovery+Profile.swift */; };
+		6D2A084F307094E2004F0DBE /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2A084E307094E0004F0DBE /* Restaurant.swift */; };
+		6D2A085C307095AF004F0DBE /* Client+Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2A085B307095AE004F0DBE /* Client+Discovery.swift */; };
 		6D426806306D479200884316 /* bolobao-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D426805306D479200884316 /* bolobao-Info.plist */; };
 		6DF849B130549DD3000BB966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AC30549DD3000BB966 /* ContentView.swift */; };
 		6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AE30549DD3000BB966 /* bolobaoApp.swift */; };
@@ -22,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D2A082A306D7D6D004F0DBE /* Discovery+Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Discovery+Profile.swift"; sourceTree = "<group>"; };
+		6D2A084E307094E0004F0DBE /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
+		6D2A085B307095AE004F0DBE /* Client+Discovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Discovery.swift"; sourceTree = "<group>"; };
 		6D426805306D479200884316 /* bolobao-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "bolobao-Info.plist"; sourceTree = "<group>"; };
 		6DF8499D30549952000BB966 /* bolobao.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bolobao.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF849AB30549DD3000BB966 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -34,6 +40,14 @@
 		6DF849DC3055A88B000BB966 /* Discovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery.swift; sourceTree = "<group>"; };
 		6DF849E93055B0C6000BB966 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		6D2A08543070953F004F0DBE /* Networking */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Networking;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		6DF8499A30549952000BB966 /* Frameworks */ = {
@@ -51,6 +65,7 @@
 		6DF8499430549952000BB966 = {
 			isa = PBXGroup;
 			children = (
+				6D2A08543070953F004F0DBE /* Networking */,
 				6DF849E63055AEEC000BB966 /* Core */,
 				6DF849D93055A739000BB966 /* Features */,
 				6DF849C630559D51000BB966 /* openapi.yaml */,
@@ -84,6 +99,9 @@
 		6DF849DA3055A745000BB966 /* Discovery */ = {
 			isa = PBXGroup;
 			children = (
+				6D2A085B307095AE004F0DBE /* Client+Discovery.swift */,
+				6D2A084E307094E0004F0DBE /* Restaurant.swift */,
+				6D2A082A306D7D6D004F0DBE /* Discovery+Profile.swift */,
 				6DF849DC3055A88B000BB966 /* Discovery.swift */,
 			);
 			path = Discovery;
@@ -112,6 +130,9 @@
 			);
 			dependencies = (
 				6DF849D330559ECF000BB966 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6D2A08543070953F004F0DBE /* Networking */,
 			);
 			name = bolobao;
 			packageProductDependencies = (
@@ -184,8 +205,11 @@
 				6DF849C730559D51000BB966 /* openapi-generator-config.yaml in Sources */,
 				6DF849DF3055AA9C000BB966 /* Discovery.swift in Sources */,
 				6DF849C830559D51000BB966 /* openapi.yaml in Sources */,
+				6D2A082C306D7DAD004F0DBE /* Discovery+Profile.swift in Sources */,
+				6D2A084F307094E2004F0DBE /* Restaurant.swift in Sources */,
 				6DF849B130549DD3000BB966 /* ContentView.swift in Sources */,
 				6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */,
+				6D2A085C307095AF004F0DBE /* Client+Discovery.swift in Sources */,
 				6DF849EC3055B5E1000BB966 /* Config.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
