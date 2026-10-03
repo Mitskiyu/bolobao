@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6D2A082C306D7DAD004F0DBE /* Discovery+Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2A082A306D7D6D004F0DBE /* Discovery+Profile.swift */; };
-		6D2A084F307094E2004F0DBE /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2A084E307094E0004F0DBE /* Restaurant.swift */; };
-		6D2A085C307095AF004F0DBE /* Client+Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2A085B307095AE004F0DBE /* Client+Discovery.swift */; };
 		6D426806306D479200884316 /* bolobao-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D426805306D479200884316 /* bolobao-Info.plist */; };
 		6DF849B130549DD3000BB966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AC30549DD3000BB966 /* ContentView.swift */; };
 		6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AE30549DD3000BB966 /* bolobaoApp.swift */; };
@@ -20,14 +17,9 @@
 		6DF849C830559D51000BB966 /* openapi.yaml in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849C630559D51000BB966 /* openapi.yaml */; };
 		6DF849CE30559E70000BB966 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 6DF849CD30559E70000BB966 /* OpenAPIURLSession */; };
 		6DF849D130559E83000BB966 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 6DF849D030559E83000BB966 /* OpenAPIRuntime */; };
-		6DF849DF3055AA9C000BB966 /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849DC3055A88B000BB966 /* Discovery.swift */; };
-		6DF849EC3055B5E1000BB966 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849E93055B0C6000BB966 /* Config.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6D2A082A306D7D6D004F0DBE /* Discovery+Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Discovery+Profile.swift"; sourceTree = "<group>"; };
-		6D2A084E307094E0004F0DBE /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
-		6D2A085B307095AE004F0DBE /* Client+Discovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Discovery.swift"; sourceTree = "<group>"; };
 		6D426805306D479200884316 /* bolobao-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "bolobao-Info.plist"; sourceTree = "<group>"; };
 		6DF8499D30549952000BB966 /* bolobao.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bolobao.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF849AB30549DD3000BB966 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -37,8 +29,6 @@
 		6DF849C33054C799000BB966 /* Local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text; path = Local.xcconfig.example; sourceTree = "<group>"; };
 		6DF849C530559D51000BB966 /* openapi-generator-config.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; name = "openapi-generator-config.yaml"; path = "../openapi-generator-config.yaml"; sourceTree = "<group>"; };
 		6DF849C630559D51000BB966 /* openapi.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; name = openapi.yaml; path = ../openapi.yaml; sourceTree = "<group>"; };
-		6DF849DC3055A88B000BB966 /* Discovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery.swift; sourceTree = "<group>"; };
-		6DF849E93055B0C6000BB966 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -50,6 +40,16 @@
 		6D2A08753070A7B6004F0DBE /* Preview Content */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		6D2A089B3070AE76004F0DBE /* Features */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Features;
+			sourceTree = "<group>";
+		};
+		6D2A08A23070AE7B004F0DBE /* Core */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -72,8 +72,8 @@
 			children = (
 				6D2A08753070A7B6004F0DBE /* Preview Content */,
 				6D2A08543070953F004F0DBE /* Networking */,
-				6DF849E63055AEEC000BB966 /* Core */,
-				6DF849D93055A739000BB966 /* Features */,
+				6D2A08A23070AE7B004F0DBE /* Core */,
+				6D2A089B3070AE76004F0DBE /* Features */,
 				6DF849C630559D51000BB966 /* openapi.yaml */,
 				6DF849C530559D51000BB966 /* openapi-generator-config.yaml */,
 				6DF849AB30549DD3000BB966 /* Assets.xcassets */,
@@ -92,33 +92,6 @@
 				6DF8499D30549952000BB966 /* bolobao.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		6DF849D93055A739000BB966 /* Features */ = {
-			isa = PBXGroup;
-			children = (
-				6DF849DA3055A745000BB966 /* Discovery */,
-			);
-			path = Features;
-			sourceTree = "<group>";
-		};
-		6DF849DA3055A745000BB966 /* Discovery */ = {
-			isa = PBXGroup;
-			children = (
-				6D2A085B307095AE004F0DBE /* Client+Discovery.swift */,
-				6D2A084E307094E0004F0DBE /* Restaurant.swift */,
-				6D2A082A306D7D6D004F0DBE /* Discovery+Profile.swift */,
-				6DF849DC3055A88B000BB966 /* Discovery.swift */,
-			);
-			path = Discovery;
-			sourceTree = "<group>";
-		};
-		6DF849E63055AEEC000BB966 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				6DF849E93055B0C6000BB966 /* Config.swift */,
-			);
-			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,6 +113,8 @@
 			fileSystemSynchronizedGroups = (
 				6D2A08543070953F004F0DBE /* Networking */,
 				6D2A08753070A7B6004F0DBE /* Preview Content */,
+				6D2A089B3070AE76004F0DBE /* Features */,
+				6D2A08A23070AE7B004F0DBE /* Core */,
 			);
 			name = bolobao;
 			packageProductDependencies = (
@@ -210,14 +185,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6DF849C730559D51000BB966 /* openapi-generator-config.yaml in Sources */,
-				6DF849DF3055AA9C000BB966 /* Discovery.swift in Sources */,
 				6DF849C830559D51000BB966 /* openapi.yaml in Sources */,
-				6D2A082C306D7DAD004F0DBE /* Discovery+Profile.swift in Sources */,
-				6D2A084F307094E2004F0DBE /* Restaurant.swift in Sources */,
 				6DF849B130549DD3000BB966 /* ContentView.swift in Sources */,
 				6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */,
-				6D2A085C307095AF004F0DBE /* Client+Discovery.swift in Sources */,
-				6DF849EC3055B5E1000BB966 /* Config.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
