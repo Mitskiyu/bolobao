@@ -17,6 +17,8 @@ from bolobao import areas, bucket, database, model, places, sources
 
 PLACES_KEY = "places/2026-09-15.parquet"
 
+log = logging.getLogger(__name__)
+
 
 def main():
     load_dotenv()
@@ -46,13 +48,16 @@ def main():
     logging.getLogger("httpx2").setLevel(logging.WARNING)
 
     s3 = boto3.client("s3", config=Config(max_pool_connections=32))
-    if not parquet.exists() and not bucket.get_file(
-        bucket_name, s3, PLACES_KEY, parquet
-    ):
+    if parquet.exists():
+        log.info("using local %s", parquet)
+    elif bucket.get_file(bucket_name, s3, PLACES_KEY, parquet):
+        log.info("downloaded %s", PLACES_KEY)
+    else:
         with duckdb.connect() as con:
             places.download(con, fsq_token)
             places.export(con, areas.DISTRICTS, parquet)
         s3.upload_file(str(parquet), bucket_name, PLACES_KEY)
+        log.info("uploaded %s", PLACES_KEY)
 
     with duckdb.connect() as con:
         all_places = places.load(con, parquet)
