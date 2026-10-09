@@ -80,6 +80,13 @@ async def enrich(
 
     message = compose(place, sources)
     if message is None:
+        out: Output = {
+            "is_match": False,
+            "match_evidence": "no usable sources",
+            "answers": [],
+            "price_level": None,
+        }
+        await _save(bucket_name, s3, place, out)
         log.info("skipped %s: no usable sources", place.id)
         return
 
@@ -131,9 +138,7 @@ async def enrich(
         log.warning("bad json: %s", place.id)
         return
 
-    key = f"profiles/{place.id}.json"
-    if await asyncio.to_thread(bucket.put_json, bucket_name, s3, key, output):
-        log.info("wrote %s", key)
+    await _save(bucket_name, s3, place, output)
 
 
 async def enrich_many(
@@ -155,3 +160,9 @@ async def enrich_many(
     ]
     log.info("enriching %d places", len(tasks))
     await asyncio.gather(*tasks)
+
+
+async def _save(bucket_name: str, s3: S3Client, place: Place, output: Output):
+    key = f"profiles/{place.id}.json"
+    if await asyncio.to_thread(bucket.put_json, bucket_name, s3, key, output):
+        log.info("wrote %s", key)
