@@ -1,9 +1,21 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from typing import Any
 
 from botocore.exceptions import ClientError
 from mypy_boto3_s3 import S3Client
+
+
+def get_file(bucket_name: str, s3: S3Client, key: str, path: Path) -> bool:
+    try:
+        s3.download_file(bucket_name, key, str(path))
+    except ClientError as e:
+        code = e.response.get("Error", {}).get("Code")
+        if code in ("404", "NoSuchKey"):
+            return False
+        raise
+    return True
 
 
 def list_ids(bucket_name: str, s3: S3Client, prefix: str) -> set[str]:

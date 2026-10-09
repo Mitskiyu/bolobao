@@ -14,6 +14,8 @@ from tavily import AsyncTavilyClient
 
 from bolobao import areas, bucket, database, model, places, sources
 
+PLACES_KEY = "places/2026-09-15.parquet"
+
 
 def main():
     load_dotenv()
@@ -31,15 +33,22 @@ def main():
     here = Path(__file__).resolve().parent
     data_dir = here.parent / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
-    parquet = data_dir / "hk.parquet"
-
-    with duckdb.connect(data_dir / "hk.db") as con:
-        if not parquet.exists():
-            places.download(con, fsq_token)
-            places.export(con, areas.DISTRICTS, parquet)
-        all_places = places.load(con, parquet)
+    parquet = data_dir / PLACES_KEY
+    parquet.parent.mkdir(parents=True, exist_ok=True)
 
     s3 = boto3.client("s3", config=Config(max_pool_connections=32))
+
+    if not parquet.exists() and not bucket.get_file(
+        bucket_name, s3, PLACES_KEY, parquet
+    ):
+        with duckdb.connect() as con:
+            places.download(con, fsq_token)
+            places.export(con, areas.DISTRICTS, parquet)
+        s3.upload_file(str(parquet), bucket_name, PLACES_KEY)
+
+    with duckdb.connect() as con:
+        all_places = places.load(con, parquet)
+
     tavily = AsyncTavilyClient(tavily_key)
 
     asyncio.run(sources.fetch_many(bucket_name, s3, tavily, all_places))
