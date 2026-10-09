@@ -66,6 +66,11 @@ def upsert(conn: psycopg.Connection, rows: list[Row]):
             price_level = EXCLUDED.price_level,
             lat = EXCLUDED.lat,
             lon = EXCLUDED.lon
+        WHERE (restaurants.name, restaurants.category, restaurants.address, restaurants.area,
+            restaurants.answers, restaurants.price_level, restaurants.lat, restaurants.lon)
+        IS DISTINCT FROM
+            (EXCLUDED.name, EXCLUDED.category, EXCLUDED.address, EXCLUDED.area,
+            EXCLUDED.answers, EXCLUDED.price_level, EXCLUDED.lat, EXCLUDED.lon)
         """,
         rows,
     )
