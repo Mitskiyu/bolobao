@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 from typing import Any, TypedDict
 
 from botocore.exceptions import ClientError
@@ -18,6 +19,8 @@ from openai.types.shared_params.response_format_json_schema import (
 
 from bolobao import areas, bucket
 from bolobao.places import Place
+
+log = logging.getLogger(__name__)
 
 
 class Answer(TypedDict):
@@ -77,6 +80,7 @@ async def enrich(
 
     message = compose(place, sources)
     if message is None:
+        log.info("skipped %s: no usable sources", place.id)
         return
 
     resp_format: ResponseFormatJSONSchema = {
@@ -106,7 +110,7 @@ async def enrich(
                 InternalServerError,
             ) as e:
                 if attempt == 4:
-                    print(f"failed to enrich {place.id}: {e}")
+                    log.warning("failed to enrich %s: %s", place.id, e)
                     return
                 await asyncio.sleep(2**attempt)
 
@@ -115,21 +119,21 @@ async def enrich(
 
     choice = resp.choices[0]
     if choice.finish_reason == "length":
-        print(f"truncated: {place.id}")
+        log.warning("truncated: %s", place.id)
         return
     if choice.message.refusal or choice.message.content is None:
-        print(f"refused: {place.id}")
+        log.warning("refused: %s", place.id)
         return
 
     try:
         output: Output = json.loads(choice.message.content)
     except json.JSONDecodeError:
-        print(f"bad json: {place.id}")
+        log.warning("bad json: %s", place.id)
         return
 
     key = f"profiles/{place.id}.json"
     if await asyncio.to_thread(bucket.put_json, bucket_name, s3, key, output):
-        print(f"wrote: {key} to {bucket_name}")
+        log.info("wrote %s", key)
 
 
 async def enrich_many(
@@ -143,10 +147,11 @@ async def enrich_many(
     sourced = bucket.list_ids(bucket_name, s3, "sources/")
     done = bucket.list_ids(bucket_name, s3, "profiles/")
     sem = asyncio.Semaphore(10)
-    await asyncio.gather(
-        *(
-            enrich(bucket_name, s3, nebius, sem, system, schema, place)
-            for place in places
-            if place.id in sourced and place.id not in done
-        )
-    )
+
+    tasks = [
+        enrich(bucket_name, s3, nebius, sem, system, schema, place)
+        for place in places
+        if place.id in sourced and place.id not in done
+    ]
+    log.info("enriching %d places", len(tasks))
+    await asyncio.gather(*tasks)

@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import os
 from pathlib import Path
 
@@ -36,8 +37,15 @@ def main():
     parquet = data_dir / PLACES_KEY
     parquet.parent.mkdir(parents=True, exist_ok=True)
 
-    s3 = boto3.client("s3", config=Config(max_pool_connections=32))
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+    logging.getLogger("botocore").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpx2").setLevel(logging.WARNING)
 
+    s3 = boto3.client("s3", config=Config(max_pool_connections=32))
     if not parquet.exists() and not bucket.get_file(
         bucket_name, s3, PLACES_KEY, parquet
     ):
@@ -50,7 +58,6 @@ def main():
         all_places = places.load(con, parquet)
 
     tavily = AsyncTavilyClient(tavily_key)
-
     asyncio.run(sources.fetch_many(bucket_name, s3, tavily, all_places))
 
     with open(here / "schema.json") as f:

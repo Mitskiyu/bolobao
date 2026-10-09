@@ -1,10 +1,13 @@
 import json
+import logging
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
 from botocore.exceptions import ClientError
 from mypy_boto3_s3 import S3Client
+
+log = logging.getLogger(__name__)
 
 
 def get_file(bucket_name: str, s3: S3Client, key: str, path: Path) -> bool:
@@ -40,7 +43,7 @@ def put_json(bucket_name: str, s3: S3Client, key: str, data: object) -> bool:
             Body=json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8"),
         )
     except ClientError as e:
-        print(f"failed to upload {key}: {e}")
+        log.error("failed to upload %s: %s", key, e)
         return False
 
     return True

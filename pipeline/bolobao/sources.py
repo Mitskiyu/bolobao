@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from mypy_boto3_s3 import S3Client
 from tavily import AsyncTavilyClient
@@ -12,6 +13,8 @@ from tavily.errors import (
 
 from bolobao import areas, bucket
 from bolobao.places import Place
+
+log = logging.getLogger(__name__)
 
 
 async def fetch(
@@ -52,7 +55,7 @@ async def fetch(
 
             except Exception as e:  # noqa: BLE001
                 if attempt == 4:
-                    print(f"failed to get sources for {place.id}: {e}")
+                    log.warning(f"failed to get sources for {place.id}: {e}")
                     resp = None
                     break
                 await asyncio.sleep(2**attempt)
@@ -60,11 +63,9 @@ async def fetch(
     if resp is None:
         return
 
-    ok = await asyncio.to_thread(
-        bucket.put_json, bucket_name, s3, f"sources/{place.id}.json", resp
-    )
-    if ok:
-        print(f"wrote: {place.id}.json to {bucket_name}")
+    key = f"sources/{place.id}.json"
+    if await asyncio.to_thread(bucket.put_json, bucket_name, s3, key, resp):
+        log.info("wrote %s", key)
 
 
 async def fetch_many(
@@ -81,4 +82,5 @@ async def fetch_many(
         for place in places
         if place.id not in done
     ]
+    log.info("fetching sources for %d places", len(tasks))
     await asyncio.gather(*tasks)
