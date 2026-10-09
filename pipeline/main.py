@@ -1,11 +1,13 @@
 import asyncio
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import boto3
 import duckdb
 import psycopg
+from botocore.config import Config
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from openai import (
@@ -83,7 +85,7 @@ def run():
         if limit:
             load_rows = load_rows[:limit]
 
-    s3 = boto3.client("s3")
+    s3 = boto3.client("s3", config=Config(max_pool_connections=32))
     done_sources = existing_ids(s3, bucket, "sources/")
 
     tavily = AsyncTavilyClient(tavily_key)
@@ -244,6 +246,20 @@ def bucket_upload(s3, bucket, key, data):
     return True
 
 
+def bucket_download(s3, bucket, key):
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    return json.loads(obj["Body"].read())
+
+
+def bucket_download_all(s3, bucket, prefix, ids):
+    ids = list(ids)
+    with ThreadPoolExecutor(max_workers=32) as pool:
+        data = pool.map(
+            lambda id: bucket_download(s3, bucket, f"{prefix}{id}.json"), ids
+        )
+    return dict(zip(ids, data))
+
+
 async def fetch_source(s3, bucket, tavily, sem, row, transl):
     id, name, local, dist, _ = row
 
@@ -307,11 +323,9 @@ def build_payload(s3, bucket, row):
     id, name, locality, district, address = row
 
     try:
-        obj = s3.get_object(Bucket=bucket, Key=f"sources/{id}.json")
+        data = bucket_download(s3, bucket, f"sources/{id}.json")
     except ClientError:
         return None
-
-    data = json.loads(obj["Body"].read())
 
     lines = [f"NAME: {name}"]
     area = locality or district
@@ -424,15 +438,12 @@ async def write_profiles(
 
 def build_profiles(s3, bucket, rows, transl):
     done = existing_ids(s3, bucket, "profiles/")
+    results = bucket_download_all(s3, bucket, "profiles/", done)
+
     profiles = []
-
     for id, name, address, locality, district, lat, lon, labels in rows:
-        if id not in done:
-            continue
-
-        obj = s3.get_object(Bucket=bucket, Key=f"profiles/{id}.json")
-        profile = json.loads(obj["Body"].read())
-        if not profile["is_match"]:
+        profile = results.get(id)
+        if profile is None or not profile["is_match"]:
             continue
 
         dining = next((l for l in labels if l.startswith("Dining and Drinking")), None)
