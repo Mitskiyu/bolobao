@@ -53,6 +53,7 @@ def main():
     elif bucket.get_file(bucket_name, s3, PLACES_KEY, parquet):
         log.info("downloaded %s", PLACES_KEY)
     else:
+        log.warning("no parquet snapshot found, rebuilding from fsq")
         with duckdb.connect() as con:
             places.download(con, fsq_token)
             places.export(con, areas.DISTRICTS, parquet)
@@ -80,8 +81,8 @@ def main():
     )
     asyncio.run(model.enrich_many(bucket_name, s3, nebius, system, schema, all_places))
 
-    enriched = bucket.list_ids(bucket_name, s3, "profiles/")
-    outputs = bucket.get_json_many(bucket_name, s3, "profiles/", list(enriched))
+    enriched = bucket.list_ids(bucket_name, s3, model.PREFIX)
+    outputs = bucket.get_json_many(bucket_name, s3, model.PREFIX, list(enriched))
 
     with psycopg.connect(
         user=user, password=password, host=host, port=port, dbname=name

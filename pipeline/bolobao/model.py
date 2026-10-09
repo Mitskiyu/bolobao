@@ -17,8 +17,10 @@ from openai.types.shared_params.response_format_json_schema import (
     ResponseFormatJSONSchema,
 )
 
-from bolobao import areas, bucket
+from bolobao import areas, bucket, sources
 from bolobao.places import Place
+
+PREFIX = "outputs/"
 
 log = logging.getLogger(__name__)
 
@@ -72,13 +74,13 @@ async def enrich(
     place: Place,
 ):
     try:
-        sources = await asyncio.to_thread(
-            bucket.get_json, bucket_name, s3, f"sources/{place.id}.json"
+        found = await asyncio.to_thread(
+            bucket.get_json, bucket_name, s3, f"{sources.PREFIX}{place.id}.json"
         )
     except ClientError:
         return
 
-    message = compose(place, sources)
+    message = compose(place, found)
     if message is None:
         out: Output = {
             "is_match": False,
@@ -149,8 +151,8 @@ async def enrich_many(
     schema: JSONSchema,
     places: list[Place],
 ):
-    sourced = bucket.list_ids(bucket_name, s3, "sources/")
-    done = bucket.list_ids(bucket_name, s3, "profiles/")
+    sourced = bucket.list_ids(bucket_name, s3, sources.PREFIX)
+    done = bucket.list_ids(bucket_name, s3, PREFIX)
     sem = asyncio.Semaphore(10)
 
     tasks = [
@@ -163,6 +165,6 @@ async def enrich_many(
 
 
 async def _save(bucket_name: str, s3: S3Client, place: Place, output: Output):
-    key = f"profiles/{place.id}.json"
+    key = f"{PREFIX}{place.id}.json"
     if await asyncio.to_thread(bucket.put_json, bucket_name, s3, key, output):
         log.info("wrote %s", key)

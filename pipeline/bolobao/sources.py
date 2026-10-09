@@ -16,6 +16,8 @@ from bolobao.places import Place
 
 log = logging.getLogger(__name__)
 
+PREFIX = "sources/"
+
 
 async def fetch(
     bucket_name: str,
@@ -63,7 +65,7 @@ async def fetch(
     if resp is None:
         return
 
-    key = f"sources/{place.id}.json"
+    key = f"{PREFIX}{place.id}.json"
     if await asyncio.to_thread(bucket.put_json, bucket_name, s3, key, resp):
         log.info("wrote %s", key)
 
@@ -74,7 +76,7 @@ async def fetch_many(
     tavily: AsyncTavilyClient,
     places: list[Place],
 ):
-    done = bucket.list_ids(bucket_name, s3, "sources/")
+    done = bucket.list_ids(bucket_name, s3, PREFIX)
     sem = asyncio.Semaphore(10)
 
     tasks = [
