@@ -1,12 +1,19 @@
 [project]
 name = "bolobao"
 version = "0.1.0"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "boto3>=1.42.97",
+    "boto3-stubs[s3]>=1.43.110",
     "duckdb>=1.4.5",
     "openai>=2.48.0",
     "psycopg[binary]>=3.2.13",
     "python-dotenv>=1.2.1",
     "tavily-python>=0.8.3",
 ]
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+
+[dependency-groups]
+dev = []
