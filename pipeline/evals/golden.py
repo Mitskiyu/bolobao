@@ -23,7 +23,7 @@ def main():
     here = Path(__file__).resolve().parent
     golden = here / "golden.csv"
     golden.parent.mkdir(parents=True, exist_ok=True)
-    parquet = here.parent / "data" / PLACES_KEY
+    parquet = here.parent.parent / "data" / PLACES_KEY
 
     logging.basicConfig(
         level=logging.INFO,
