@@ -92,54 +92,22 @@ async def enrich(
         log.info("skipped %s: no usable sources", place.id)
         return
 
-    resp_format: ResponseFormatJSONSchema = {
-        "type": "json_schema",
-        "json_schema": schema,
-    }
-
-    resp = None
     async with sem:
-        for attempt in range(5):
-            try:
-                resp = await nebius.chat.completions.create(
-                    model="nvidia/Nemotron-3-Ultra-550b-a55b",
-                    messages=[
-                        {"role": "system", "content": system},
-                        {"role": "user", "content": message},
-                    ],
-                    max_tokens=32000,
-                    temperature=0.2,
-                    response_format=resp_format,
-                )
-                break
-            except (
-                RateLimitError,
-                APITimeoutError,
-                APIConnectionError,
-                InternalServerError,
-            ) as e:
-                if attempt == 4:
-                    log.warning("failed to enrich %s: %s", place.id, e)
-                    return
-                await asyncio.sleep(2**attempt)
+        result = await complete(
+            nebius,
+            "nvidia/Nemotron-3-Ultra-550b-a55b",
+            system,
+            schema,
+            message,
+            place.id,
+            temperature=0.2,
+            top_p=0.95,
+        )
 
-    if resp is None:
+    if result is None:
         return
 
-    choice = resp.choices[0]
-    if choice.finish_reason == "length":
-        log.warning("truncated: %s", place.id)
-        return
-    if choice.message.refusal or choice.message.content is None:
-        log.warning("refused: %s", place.id)
-        return
-
-    try:
-        output: Output = json.loads(choice.message.content)
-    except json.JSONDecodeError:
-        log.warning("bad json: %s", place.id)
-        return
-
+    output: Output = result
     await _save(bucket_name, s3, place, output)
 
 
@@ -162,6 +130,67 @@ async def enrich_many(
     ]
     log.info("enriching %d places", len(tasks))
     await asyncio.gather(*tasks)
+
+
+async def complete(
+    nebius: AsyncOpenAI,
+    name: str,
+    system: str,
+    schema: JSONSchema,
+    message: str,
+    label: str,
+    *,
+    temperature: float,
+    top_p: float,
+    max_tokens: int = 32000,
+) -> Any | None:
+    resp_format: ResponseFormatJSONSchema = {
+        "type": "json_schema",
+        "json_schema": schema,
+    }
+
+    resp = None
+    for attempt in range(5):
+        try:
+            resp = await nebius.chat.completions.create(
+                model=name,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": message},
+                ],
+                max_tokens=max_tokens,
+                temperature=temperature,
+                top_p=top_p,
+                response_format=resp_format,
+            )
+            break
+        except (
+            RateLimitError,
+            APITimeoutError,
+            APIConnectionError,
+            InternalServerError,
+        ) as e:
+            if attempt == 4:
+                log.warning("request failed for %s: %s", label, e)
+                return None
+            await asyncio.sleep(2**attempt)
+
+    if resp is None:
+        return None
+
+    choice = resp.choices[0]
+    if choice.finish_reason == "length":
+        log.warning("truncated: %s", label)
+        return None
+    if choice.message.refusal or choice.message.content is None:
+        log.warning("refused: %s", label)
+        return None
+
+    try:
+        return json.loads(choice.message.content)
+    except json.JSONDecodeError:
+        log.warning("bad json: %s", label)
+        return None
 
 
 async def _save(bucket_name: str, s3: S3Client, place: Place, output: Output):
