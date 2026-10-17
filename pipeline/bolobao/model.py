@@ -178,6 +178,15 @@ async def complete(
     if resp is None:
         return None
 
+    if resp.usage:
+        log.debug(
+            "tokens %s %s: %d in, %d out",
+            name,
+            label,
+            resp.usage.prompt_tokens,
+            resp.usage.completion_tokens,
+        )
+
     choice = resp.choices[0]
     if choice.finish_reason == "length":
         log.warning("truncated: %s", label)
