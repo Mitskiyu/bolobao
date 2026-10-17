@@ -1,5 +1,5 @@
 {
-  "name": "restaurant_profile",
+  "name": "enrich",
   "strict": true,
   "schema": {
     "type": "object",

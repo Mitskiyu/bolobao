@@ -65,9 +65,9 @@ def main():
     tavily = AsyncTavilyClient(tavily_key)
     asyncio.run(sources.fetch_many(bucket_name, s3, tavily, all_places))
 
-    with open(here / "schema.json") as f:
+    with open(here / "enrich.json") as f:
         schema: JSONSchema = json.load(f)
-    with open(here / "system.md") as f:
+    with open(here / "enrich.md") as f:
         system = (
             f.read()
             + "\n\n### Schema\n"
