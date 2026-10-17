@@ -1,0 +1,14 @@
+{
+  "name": "rate",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "usable_reason": { "type": "string" },
+      "usable": { "type": "boolean" },
+      "score": { "type": "integer", "enum": [1, 2, 3, 4, 5] }
+    },
+    "required": ["usable_reason", "usable", "score"],
+    "additionalProperties": false
+  }
+}

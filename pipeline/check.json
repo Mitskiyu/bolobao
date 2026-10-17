@@ -1,0 +1,64 @@
+{
+  "name": "check",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "namesakes": { "type": "string" },
+      "answers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "enum": [
+                "best_dish",
+                "what_to_order_first",
+                "order_this_if_its_your_second_time",
+                "order_this_not_that",
+                "what_to_skip",
+                "known_for",
+                "portion_size",
+                "value_for_money",
+                "worth_the_queue",
+                "wait_time",
+                "busy",
+                "need_to_book",
+                "opening_hours",
+                "best_time",
+                "breakfast",
+                "service",
+                "how_old",
+                "cash_only",
+                "share_table",
+                "getting_there",
+                "spice_level",
+                "drinks",
+                "room_vibe"
+              ]
+            },
+            "about_this_place": { "type": "boolean" },
+            "reason": { "type": "string" },
+            "supported": { "type": "boolean" }
+          },
+          "required": ["prompt", "about_this_place", "reason", "supported"],
+          "additionalProperties": false
+        }
+      },
+      "price_reason": { "type": "string" },
+      "price_supported": { "type": "boolean" },
+      "closed_reason": { "type": "string" },
+      "closed": { "type": "boolean" }
+    },
+    "required": [
+      "namesakes",
+      "answers",
+      "price_reason",
+      "price_supported",
+      "closed_reason",
+      "closed"
+    ],
+    "additionalProperties": false
+  }
+}
