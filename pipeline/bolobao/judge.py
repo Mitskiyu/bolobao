@@ -11,10 +11,10 @@ from openai import AsyncOpenAI
 from openai.types.shared_params.response_format_json_schema import JSONSchema
 
 from bolobao import areas, bucket, model, sources
-from bolobao.model import Output
+from bolobao.model import Answer, Output
 from bolobao.places import Place
 
-PREFIX = f"verdicts/v8/{model.VERSION}/"
+PREFIX = f"verdicts/v9/{model.VERSION}/"
 
 log = logging.getLogger(__name__)
 
@@ -110,31 +110,39 @@ async def review(
     message = compose(place, found, output)
     if message is None:
         return
-    card = compose_card(place, output)
 
     async with sem:
-        checks = await asyncio.gather(
+        results = await asyncio.gather(
             *(
                 _check(nebius, check_system, check_schema, message, place, output)
                 for _ in range(3)
             )
         )
-        ratings = await asyncio.gather(
-            *(_rate(nebius, rate_system, rate_schema, card, place) for _ in range(3))
-        )
+        checks = [c for c in results if c is not None]
+        if len(checks) < 3:
+            log.warning("not enough checks: %s (%d)", place.id, len(checks))
+            return
 
-    valid_checks = [c for c in checks if c is not None]
-    valid_ratings = [r for r in ratings if r is not None]
-    if len(valid_checks) < 3 or len(valid_ratings) < 3:
-        log.warning(
-            "not enough votes: %s (%d checks, %d ratings)",
-            place.id,
-            len(valid_checks),
-            len(valid_ratings),
-        )
-        return
+        kept = _supported_answers(checks, output)
+        if not kept:
+            ratings: list[Rating] = [
+                {"usable_reason": "No supported answers.", "usable": False, "score": 1}
+            ] * 3
+        else:
+            shown: Output = {**output, "answers": kept}
+            card = compose_card(place, shown)
+            rated = await asyncio.gather(
+                *(
+                    _rate(nebius, rate_system, rate_schema, card, place)
+                    for _ in range(3)
+                )
+            )
+            ratings = [r for r in rated if r is not None]
+            if len(ratings) < 3:
+                log.warning("not enough ratings: %s (%d)", place.id, len(ratings))
+                return
 
-    verdict = _combine(valid_checks, valid_ratings)
+    verdict = _combine(checks, ratings)
     await _save(bucket_name, s3, place, verdict)
 
 
@@ -224,6 +232,18 @@ async def _rate(
         temperature=1.0,
         top_p=0.95,
     )
+
+
+def _supported_answers(checks: list[Checks], output: Output) -> list[Answer]:
+    kept = []
+    for a in output["answers"]:
+        votes = [
+            next(c for c in run["answers"] if c["prompt"] == a["prompt"])["supported"]
+            for run in checks
+        ]
+        if _majority(votes):
+            kept.append(a)
+    return kept
 
 
 def _combine(checks: list[Checks], ratings: list[Rating]) -> Verdict:

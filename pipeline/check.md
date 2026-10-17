@@ -6,6 +6,7 @@ The sources are usually written in Traditional Chinese. The output is written in
 The sources are given in full below. Each starts with a number in brackets, a title, its URL, then its text. Find an answer's source by matching its URL. Do not try to visit any URL.
 Addresses may appear in English or Chinese. The same address in either language is the same address.
 A source's title and URL count as part of the source, including any address or area in them.
+Sham Shui Po includes Cheung Sha Wan, Lai Chi Kok, Shek Kip Mei, Mei Foo, Nam Cheong and Yau Yat Chuen. A source naming any of these is in this area.
 
 Your task is to check every answer in the output against its source, and check whether the restaurant is still open.
 
@@ -20,9 +21,8 @@ The answers are only the items in the answers list. price_level is not an answer
 Then, for every answer, find the source its URL points to. If the URL does not appear in the sources, the answer is not supported. Otherwise, check in this order:
 
 1. Is the source about this restaurant? Write the result in about_this_place.
-   - If it gives an address that differs from the one above, it is about a different branch or a restaurant with the same name. It is not about this restaurant.
-   - If it gives no address and namesakes is not "none", it could be about any of them. It is about this restaurant only if it mentions this address, street or building, or names this area when none of the namesakes are in this area.
-   - If it gives no address and namesakes is "none", it is about this restaurant.
+   - If it gives an address that differs from the one above, or names a street or area outside this restaurant's area, it is about a different branch or a restaurant with the same name. It is not about this restaurant.
+   - If it gives no address and points nowhere else, it is about this restaurant.
 2. Does the source actually say this? An answer that adds to, exaggerates or reverses what the source says is not supported.
 
 If about_this_place is false, supported is false.
