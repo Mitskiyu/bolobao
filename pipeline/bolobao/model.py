@@ -20,7 +20,7 @@ from openai.types.shared_params.response_format_json_schema import (
 from bolobao import areas, bucket, sources
 from bolobao.places import Place
 
-VERSION = "v5"
+VERSION = "v7"
 PREFIX = f"outputs/{VERSION}/"
 
 log = logging.getLogger(__name__)

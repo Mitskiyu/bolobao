@@ -12,6 +12,7 @@ Then decide which sources are about this restaurant:
 - A source that gives a different address, or names a street or area outside this restaurant's area, is about a different branch or a restaurant with the same name. Do not use it, and do not assume two different addresses are the same place.
 - A source that gives no address and points nowhere else is about this restaurant.
 - One source about this restaurant at this address is enough for a match.
+- If this restaurant has no address, it is a match only if the sources describe a single restaurant with this name in this area. If they describe several, it is not a match.
 
 Sham Shui Po includes Cheung Sha Wan, Lai Chi Kok, Shek Kip Mei, Mei Foo, Nam Cheong and Yau Yat Chuen. A source naming any of these is in this area.
 
@@ -40,20 +41,20 @@ Every answer must say only what its source says. Do not upgrade a claim: a dish 
 Never infer a dish from a cuisine type or the restaurant's name.
 Never pick a dish because a source lists it first.
 Use each dish in only one answer.
-Give years as the source states them, for example "Since 1973", not a number of years you worked out.
+Give years and dates as the source states them, for example "Since 1973" or "Opened December 2025". Never work out an age or write "last year".
 
 Writing:
 - No em dashes or semicolons.
-- No sales words in your wording: signature, must-try, expertly, elegant, authentic, hidden gem. A source calling a dish its signature is still evidence for best_dish. Say what the source says about the dish instead, for example "The roast goose is smoky and crisp" or "The roast goose is excellent" if a source praises it that way.
-- Never mention the source, the reviewer or the platform.
-- Dish names: English name, then 「Chinese」 only if the Chinese appears verbatim in the source. Use corner brackets only, never parentheses or quotes.
+- Never mention where information came from: no "reviewer", "source", "listed", "official site", "video" or "menu".
+- Never use these words, even when a source does: signature, must-try, must-eat, expertly, elegant, authentic, hidden gem. A source calling a dish its signature is still evidence for best_dish. Say what the source says about the dish instead, for example "The roast goose is smoky and crisp" or "The roast goose is excellent" if a source praises it that way.
+- Dish names: always an English name first, then 「Chinese」 only if the Chinese appears verbatim in the source. Use corner brackets only, never parentheses or quotes.
   Bad: Tea Teddies 「Tea Teddies」
   Bad: Hainan chicken rice (海南雞飯)
+  Bad: 素鵝
   Good: pan-fried beef noodles 「炒牛河」
   Good: Tea Teddies
 
 Prompts:
-
 - best_dish: A dish a source calls a signature, must-eat, recommended or famous for. If several are named, choose the one most praised across sources. If none stands out, leave it out. A dish only listed among other dishes is not enough. best_dish and what_to_order_first must be different dishes.
 - what_to_order_first: The dish to start with when several are named and none is singled out.
 - order_this_if_its_your_second_time: A dish worth coming back for, if you've already had the best dish.
