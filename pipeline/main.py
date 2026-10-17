@@ -15,8 +15,6 @@ from tavily import AsyncTavilyClient
 
 from bolobao import areas, bucket, database, model, places, sources
 
-PLACES_KEY = "places/2026-09-15.parquet"
-
 log = logging.getLogger(__name__)
 
 
@@ -32,11 +30,12 @@ def main():
     host = os.environ["PG_HOST"]
     port = os.environ["PG_PORT"]
     name = os.environ["PG_NAME"]
+    places_key = os.environ["PLACES_KEY"]
 
     here = Path(__file__).resolve().parent
     data_dir = here.parent / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
-    parquet = data_dir / PLACES_KEY
+    parquet = data_dir / places_key
     parquet.parent.mkdir(parents=True, exist_ok=True)
 
     logging.basicConfig(
@@ -50,15 +49,15 @@ def main():
     s3 = boto3.client("s3", config=Config(max_pool_connections=32))
     if parquet.exists():
         log.info("using local %s", parquet)
-    elif bucket.get_file(bucket_name, s3, PLACES_KEY, parquet):
-        log.info("downloaded %s", PLACES_KEY)
+    elif bucket.get_file(bucket_name, s3, places_key, parquet):
+        log.info("downloaded %s", places_key)
     else:
         log.warning("no parquet snapshot found, rebuilding from fsq")
         with duckdb.connect() as con:
             places.download(con, fsq_token)
             places.export(con, areas.DISTRICTS, parquet)
-        s3.upload_file(str(parquet), bucket_name, PLACES_KEY)
-        log.info("uploaded %s", PLACES_KEY)
+        s3.upload_file(str(parquet), bucket_name, places_key)
+        log.info("uploaded %s", places_key)
 
     with duckdb.connect() as con:
         all_places = places.load(con, parquet)

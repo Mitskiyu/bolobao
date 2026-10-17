@@ -10,7 +10,6 @@ from botocore.config import Config
 from dotenv import load_dotenv
 
 from bolobao import bucket, model, places, sources
-from main import PLACES_KEY
 
 log = logging.getLogger(__name__)
 
@@ -19,11 +18,12 @@ def main():
     load_dotenv()
 
     bucket_name = os.environ["S3_BUCKET"]
+    places_key = os.environ["PLACES_KEY"]
 
     here = Path(__file__).resolve().parent
     golden = here / "golden.csv"
     golden.parent.mkdir(parents=True, exist_ok=True)
-    parquet = here.parent.parent / "data" / PLACES_KEY
+    parquet = here.parent.parent / "data" / places_key
 
     logging.basicConfig(
         level=logging.INFO,
