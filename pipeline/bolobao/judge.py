@@ -14,7 +14,7 @@ from bolobao import areas, bucket, model, sources
 from bolobao.model import Output
 from bolobao.places import Place
 
-PREFIX = "verdicts/v8-rerun/"
+PREFIX = f"verdicts/v8/{model.VERSION}/"
 
 log = logging.getLogger(__name__)
 
