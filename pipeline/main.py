@@ -13,12 +13,12 @@ from openai import AsyncOpenAI
 from openai.types.shared_params.response_format_json_schema import JSONSchema
 from tavily import AsyncTavilyClient
 
-from bolobao import areas, bucket, database, model, places, sources
+from bolobao import areas, bucket, database, judge, model, places, sources
 
 log = logging.getLogger(__name__)
 
 
-def main():
+async def main():
     load_dotenv()
 
     fsq_token = os.environ["FSQ_TOKEN"]
@@ -63,22 +63,29 @@ def main():
         all_places = places.load(con, parquet)
 
     tavily = AsyncTavilyClient(tavily_key)
-    asyncio.run(sources.fetch_many(bucket_name, s3, tavily, all_places))
+    await sources.fetch_many(bucket_name, s3, tavily, all_places)
 
-    with open(here / "enrich.json") as f:
-        schema: JSONSchema = json.load(f)
-    with open(here / "enrich.md") as f:
-        system = (
-            f.read()
-            + "\n\n### Schema\n"
-            + json.dumps(schema, ensure_ascii=False, indent=2)
-        )
+    enrich_system, enrich_schema = load(here, "enrich")
+    check_system, check_schema = load(here, "check")
+    rate_system, rate_schema = load(here, "rate")
 
     nebius = AsyncOpenAI(
         base_url="https://api.tokenfactory.us-central1.nebius.com/v1/",
         api_key=nebius_key,
     )
-    asyncio.run(model.enrich_many(bucket_name, s3, nebius, system, schema, all_places))
+    await model.enrich_many(
+        bucket_name, s3, nebius, enrich_system, enrich_schema, all_places
+    )
+    await judge.review_many(
+        bucket_name,
+        s3,
+        nebius,
+        check_system,
+        check_schema,
+        rate_system,
+        rate_schema,
+        all_places,
+    )
 
     enriched = bucket.list_ids(bucket_name, s3, model.PREFIX)
     outputs = bucket.get_json_many(bucket_name, s3, model.PREFIX, list(enriched))
@@ -89,5 +96,17 @@ def main():
         database.upsert(conn, database.rows(all_places, outputs))
 
 
+def load(here: Path, name: str) -> tuple[str, JSONSchema]:
+    with open(here / f"{name}.json") as f:
+        schema: JSONSchema = json.load(f)
+    with open(here / f"{name}.md") as f:
+        system = (
+            f.read()
+            + "\n\n### Schema\n"
+            + json.dumps(schema, ensure_ascii=False, indent=2)
+        )
+    return system, schema
+
+
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
