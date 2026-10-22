@@ -4,6 +4,8 @@ extension UIFont {
 
     static let hand = UIFont(name: "Caveat-Bold", size: 29)!
     static let handSmall = UIFont(name: "Caveat-Bold", size: 23)!
+    static let brush = UIFont(name: "LXGWWenKaiTC-Bold", size: 22)!
+    static let brushSmall = UIFont(name: "LXGWWenKaiTC-Bold", size: 21)!
     static let answer = UIFont(name: "NotoSansHK-Regular", size: 17)!
     static let label = UIFont(name: "NotoSansHK-Bold", size: 11)!
 }
