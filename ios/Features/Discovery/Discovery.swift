@@ -10,18 +10,11 @@ struct Discovery: View {
     @State private var restaurants: [Restaurant] = []
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(restaurants) { r in
-                    Profile(restaurant: r)
-                        .padding()
-                        .background(
-                            .background.secondary,
-                            in: .rect(cornerRadius: 16)
-                        )
-                }
+        ZStack {
+            Color.canvas.ignoresSafeArea()
+            if let restaurant = restaurants.first {
+                Profile(restaurant: restaurant)
             }
-            .padding()
         }
         .task {
             do {

@@ -2,7 +2,7 @@ import SwiftUI
 
 extension UIFont {
 
-    static let hand = UIFont(name: "Caveat-Bold", size: 29)!
+    static let hand = UIFont(name: "Caveat-Bold", size: 24)!
     static let handSmall = UIFont(name: "Caveat-Bold", size: 23)!
     static let brush = UIFont(name: "LXGWWenKaiTC-Bold", size: 22)!
     static let brushSmall = UIFont(name: "LXGWWenKaiTC-Bold", size: 21)!

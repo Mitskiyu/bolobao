@@ -1,0 +1,38 @@
+import SwiftUI
+
+struct Paper: View {
+
+    static let line: CGFloat = 32
+    static let baseline: CGFloat = 23
+    static let rule: CGFloat = 25
+    static let gutter: CGFloat = 20
+    static let labelWidth: CGFloat = 96
+    static let columnGap: CGFloat = 14
+    static let margin = gutter + labelWidth + columnGap / 2
+
+    var scrolled: CGFloat = 0
+
+    var body: some View {
+        Canvas { context, size in
+            var first = (Paper.rule - scrolled)
+                .truncatingRemainder(dividingBy: Paper.line)
+            if first < 0 {
+                first += Paper.line
+            }
+
+            var rules = Path()
+            for y in stride(from: first, to: size.height, by: Paper.line) {
+                rules.addRect(CGRect(x: 0, y: y, width: size.width, height: 1))
+            }
+            context.fill(rules, with: .color(.rule))
+
+            let margin = CGRect(
+                x: Paper.margin,
+                y: 0,
+                width: 1,
+                height: size.height
+            )
+            context.fill(Path(margin), with: .color(.ruleAccent))
+        }
+    }
+}
