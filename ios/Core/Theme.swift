@@ -12,6 +12,7 @@ extension UIFont {
 
 extension Font {
 
+    static let wordmark = Font.custom("NotoSansHK-Black", fixedSize: 22)
     static let printedHeader = Font.custom("NotoSansHK-Black", fixedSize: 14)
     static let stamp = Font.custom("NotoSansHK-Black", fixedSize: 16)
     static let bigStamp = Font.custom("NotoSansHK-Black", fixedSize: 30)
