@@ -122,9 +122,10 @@ private struct Row<Content: View>: View {
         .background(alignment: .bottom) {
             if underlined {
                 Rectangle()
-                    .fill(.ruleAccent)
+                    .fill(.accent.opacity(0.4))
                     .frame(height: 1)
                     .padding(.bottom, Paper.line - Paper.rule - 1)
+                    .padding(.horizontal, -Paper.gutter)
             }
         }
     }
