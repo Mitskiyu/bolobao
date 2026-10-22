@@ -90,10 +90,13 @@ async def main():
     enriched = bucket.list_ids(bucket_name, s3, model.PREFIX)
     outputs = bucket.get_json_many(bucket_name, s3, model.PREFIX, list(enriched))
 
+    judged = bucket.list_ids(bucket_name, s3, judge.PREFIX)
+    verdicts = bucket.get_json_many(bucket_name, s3, judge.PREFIX, list(judged))
+
     with psycopg.connect(
         user=user, password=password, host=host, port=port, dbname=name
     ) as conn:
-        database.upsert(conn, database.rows(all_places, outputs))
+        database.upsert(conn, database.rows(all_places, outputs, verdicts))
 
 
 def load(here: Path, name: str) -> tuple[str, JSONSchema]:

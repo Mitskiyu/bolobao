@@ -5,9 +5,8 @@
 package database
 
 import (
-	"uuid"
-
 	"github.com/jackc/pgx/v5/pgtype"
+	"uuid"
 )
 
 type Restaurant struct {
@@ -18,6 +17,7 @@ type Restaurant struct {
 	Address    string
 	Area       string
 	Answers    []byte
+	Score      float64
 	PriceLevel pgtype.Int4
 	Lat        float64
 	Lon        float64
