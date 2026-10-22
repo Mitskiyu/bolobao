@@ -14,11 +14,10 @@ struct Paper: View {
 
     var body: some View {
         Canvas { context, size in
-            var first = (Paper.rule - scrolled)
-                .truncatingRemainder(dividingBy: Paper.line)
-            if first < 0 {
-                first += Paper.line
-            }
+            let top = max(-scrolled, 0)
+            let hidden = max(
+                ((scrolled - Paper.rule) / Paper.line).rounded(.up), 0)
+            let first = Paper.rule - scrolled + hidden * Paper.line
 
             var rules = Path()
             for y in stride(from: first, to: size.height, by: Paper.line) {
@@ -28,9 +27,9 @@ struct Paper: View {
 
             let margin = CGRect(
                 x: Paper.margin,
-                y: 0,
+                y: top,
                 width: 1,
-                height: size.height
+                height: size.height - top
             )
             context.fill(Path(margin), with: .color(.ruleAccent))
         }
