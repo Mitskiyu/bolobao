@@ -4,5 +4,12 @@
 <dict>
 	<key>PORT</key>
 	<string>$(PORT)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Caveat-Bold.ttf</string>
+		<string>NotoSansHK-Regular.ttf</string>
+		<string>NotoSansHK-Bold.ttf</string>
+		<string>NotoSansHK-Black.ttf</string>
+	</array>
 </dict>
 </plist>

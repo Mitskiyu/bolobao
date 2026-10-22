@@ -1,13 +1,17 @@
 import SwiftUI
 
+extension UIFont {
+
+    static let hand = UIFont(name: "Caveat-Bold", size: 29)!
+    static let handSmall = UIFont(name: "Caveat-Bold", size: 23)!
+    static let answer = UIFont(name: "NotoSansHK-Regular", size: 17)!
+    static let label = UIFont(name: "NotoSansHK-Bold", size: 11)!
+}
+
 extension Font {
 
-    private static let handName = "BradleyHandITCTT-Bold"
-
-    static let hand = Font.custom(handName, size: 24, relativeTo: .title2)
-    static let handSmall = Font.custom(handName, size: 19, relativeTo: .body)
-    static let label = Font.system(size: 11, weight: .bold)
-    static let printedHeader = Font.system(size: 14, weight: .black)
-    static let stamp = Font.system(size: 16, weight: .black)
-    static let bigStamp = Font.system(size: 30, weight: .black)
+    static let printedHeader = Font.custom("NotoSansHK-Black", fixedSize: 14)
+    static let stamp = Font.custom("NotoSansHK-Black", fixedSize: 16)
+    static let bigStamp = Font.custom("NotoSansHK-Black", fixedSize: 30)
+    static let small = Font.custom("NotoSansHK-Regular", fixedSize: 13)
 }

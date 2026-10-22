@@ -32,6 +32,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6D231409308A09B200E506C7 /* Fonts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		6D2A08543070953F004F0DBE /* Networking */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Networking;
@@ -70,6 +75,7 @@
 		6DF8499430549952000BB966 = {
 			isa = PBXGroup;
 			children = (
+				6D231409308A09B200E506C7 /* Fonts */,
 				6D2A08753070A7B6004F0DBE /* Preview Content */,
 				6D2A08543070953F004F0DBE /* Networking */,
 				6D2A08A23070AE7B004F0DBE /* Core */,
@@ -111,6 +117,7 @@
 				6DF849D330559ECF000BB966 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				6D231409308A09B200E506C7 /* Fonts */,
 				6D2A08543070953F004F0DBE /* Networking */,
 				6D2A08753070A7B6004F0DBE /* Preview Content */,
 				6D2A089B3070AE76004F0DBE /* Features */,
