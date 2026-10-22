@@ -7,22 +7,34 @@ package database
 
 import (
 	"context"
-	"uuid"
 
 	"github.com/jackc/pgx/v5/pgtype"
+	"uuid"
 )
 
 const listRestaurants = `-- name: ListRestaurants :many
-SELECT id, name, category, address, area, answers, price_level, lat, lon
-FROM restaurants
-WHERE id > $1
-ORDER BY id
-LIMIT $2
+WITH cur AS (
+    SELECT score, id
+    FROM restaurants
+    WHERE id = $2::uuid
+)
+
+SELECT
+    r.id, r.name, r.category, r.address, r.area,
+    r.answers, r.score, r.price_level, r.lat, r.lon
+FROM restaurants r
+LEFT JOIN cur ON true
+WHERE
+    cur.id IS null
+    OR r.score < cur.score
+    OR (r.score = cur.score AND r.id > cur.id)
+ORDER BY r.score DESC, r.id
+LIMIT $1
 `
 
 type ListRestaurantsParams struct {
-	Cursor   uuid.UUID
 	RowLimit int32
+	Cursor   uuid.UUID
 }
 
 type ListRestaurantsRow struct {
@@ -32,13 +44,14 @@ type ListRestaurantsRow struct {
 	Address    string
 	Area       string
 	Answers    []byte
+	Score      float64
 	PriceLevel pgtype.Int4
 	Lat        float64
 	Lon        float64
 }
 
 func (q *Queries) ListRestaurants(ctx context.Context, arg ListRestaurantsParams) ([]ListRestaurantsRow, error) {
-	rows, err := q.db.Query(ctx, listRestaurants, arg.Cursor, arg.RowLimit)
+	rows, err := q.db.Query(ctx, listRestaurants, arg.RowLimit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}
@@ -53,6 +66,7 @@ func (q *Queries) ListRestaurants(ctx context.Context, arg ListRestaurantsParams
 			&i.Address,
 			&i.Area,
 			&i.Answers,
+			&i.Score,
 			&i.PriceLevel,
 			&i.Lat,
 			&i.Lon,
