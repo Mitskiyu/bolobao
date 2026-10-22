@@ -14,7 +14,9 @@ extension Font {
 
     static let wordmark = Font.custom("NotoSansHK-Black", fixedSize: 22)
     static let printedHeader = Font.custom("NotoSansHK-Black", fixedSize: 14)
-    static let stamp = Font.custom("NotoSansHK-Black", fixedSize: 16)
-    static let bigStamp = Font.custom("NotoSansHK-Black", fixedSize: 30)
     static let small = Font.custom("NotoSansHK-Regular", fixedSize: 13)
+
+    static func hand(_ size: CGFloat) -> Font {
+        .custom("Caveat-Bold", fixedSize: size)
+    }
 }

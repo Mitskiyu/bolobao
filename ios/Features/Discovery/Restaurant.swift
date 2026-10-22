@@ -3,6 +3,10 @@ import Foundation
 typealias Restaurant = Components.Schemas.Restaurant
 extension Restaurant: Identifiable {
 
+    var seed: Int {
+        id.unicodeScalars.reduce(0) { $0 + Int($1.value) }
+    }
+
     var interleavedAnswers: [Answer] {
         let dishes = answers.filter(\.prompt.isDish)
         let others = answers.filter { !$0.prompt.isDish }

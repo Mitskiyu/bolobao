@@ -19,7 +19,7 @@ extension Discovery {
                     .foregroundStyle(.accent)
                     Spacer()
                     if let level = restaurant.priceLevel {
-                        PriceStamp(level: level)
+                        PriceStamp(level: level, seed: restaurant.seed)
                     }
                 }
                 .padding(.horizontal, Paper.gutter)
@@ -134,6 +134,7 @@ private struct Row<Content: View>: View {
 private struct PriceStamp: View {
 
     let level: Int
+    let seed: Int
 
     var body: some View {
         Text(
@@ -147,7 +148,11 @@ private struct PriceStamp: View {
         .padding(.horizontal, 6)
         .frame(minWidth: 40, minHeight: 40)
         .overlay {
-            Ellipse().stroke(.handwriting, lineWidth: 2)
+            PenCircle(seed: seed)
+                .stroke(
+                    .handwriting,
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                )
         }
         .rotationEffect(.degrees(-8))
     }
