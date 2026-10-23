@@ -11,6 +11,10 @@ struct Discovery: View {
     @State private var dragX: CGFloat = 0
     @State private var axis: Axis?
     @State private var isFlying = false
+    @State private var tapped: Bool?
+    @State private var dragSave = false
+    @State private var tapOpacity: CGFloat = 0
+    @State private var tapScale: CGFloat = 1.5
 
     var fetch: (_ cursor: String?, _ limit: Int?) async throws -> [Restaurant] =
         {
@@ -62,6 +66,35 @@ struct Discovery: View {
         }
     }
 
+    private var stampSave: Bool {
+        tapped ?? dragSave
+    }
+
+    private var stampOpacity: CGFloat {
+        guard tapped == nil else { return tapOpacity }
+        return min(max((abs(dragX) - 20) / 90, 0), 1)
+    }
+
+    private var stampScale: CGFloat {
+        tapped == nil ? 1.5 - 0.5 * stampOpacity : tapScale
+    }
+
+    private func tap(save: Bool) {
+        guard !isFlying, !restaurants.isEmpty else { return }
+        isFlying = true
+        tapped = save
+        withAnimation(.easeOut(duration: 0.16)) {
+            tapOpacity = 1
+        }
+        withAnimation(.timingCurve(0.3, 1.6, 0.5, 1, duration: 0.26)) {
+            tapScale = 1
+        }
+        Task {
+            try? await Task.sleep(for: .milliseconds(380))
+            flyOff(save: save)
+        }
+    }
+
     private func flyOff(
         save: Bool,
         animation: Animation = .timingCurve(
@@ -73,6 +106,9 @@ struct Discovery: View {
         } completion: {
             save ? self.save() : skip()
             dragX = 0
+            tapped = nil
+            tapOpacity = 0
+            tapScale = 1.5
             isFlying = false
         }
     }
@@ -88,6 +124,9 @@ struct Discovery: View {
                 }
                 if axis == .horizontal {
                     dragX = value.translation.width
+                    if dragX != 0 {
+                        dragSave = dragX > 0
+                    }
                 }
             }
             .onEnded { value in
@@ -119,6 +158,13 @@ struct Discovery: View {
                     restaurant: restaurant,
                     isSwiping: isTop && axis == .horizontal
                 )
+                .overlay {
+                    SlipStamp(
+                        save: stampSave,
+                        opacity: isTop ? stampOpacity : 0,
+                        scale: stampScale
+                    )
+                }
                 .background {
                     Rectangle()
                         .fill(.surface)
@@ -140,14 +186,14 @@ struct Discovery: View {
         .overlay(alignment: .bottom) {
             HStack {
                 Button {
-                    flyOff(save: false)
+                    tap(save: false)
                 } label: {
                     Stamp(text: "SKIP", color: .textMuted, seed: 1)
                         .rotationEffect(.degrees(-5))
                 }
                 Spacer()
                 Button {
-                    flyOff(save: true)
+                    tap(save: true)
                 } label: {
                     Stamp(text: "SAVE", color: .accent, seed: 2)
                         .rotationEffect(.degrees(4))
@@ -174,4 +220,31 @@ struct Discovery: View {
 
 #Preview {
     Discovery(fetch: { cursor, _ in cursor == nil ? Restaurant.samples : [] })
+}
+
+private struct SlipStamp: View {
+
+    let save: Bool
+    let opacity: CGFloat
+    let scale: CGFloat
+
+    var body: some View {
+        Discovery.Stamp(
+            text: save ? "SAVED" : "SKIPPED",
+            color: save ? .accent : .textMuted,
+            size: 48,
+            seed: save ? 3 : 4
+        )
+        .rotationEffect(.degrees(save ? -12 : 10))
+        .scaleEffect(scale)
+        .opacity(0.9 * opacity)
+        .padding(.top, 104)
+        .padding(save ? .leading : .trailing, save ? 40 : 34)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: save ? .topLeading : .topTrailing
+        )
+        .allowsHitTesting(false)
+    }
 }
