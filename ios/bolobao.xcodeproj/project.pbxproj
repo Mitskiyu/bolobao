@@ -11,8 +11,6 @@
 		6DF849B130549DD3000BB966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AC30549DD3000BB966 /* ContentView.swift */; };
 		6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AE30549DD3000BB966 /* bolobaoApp.swift */; };
 		6DF849B330549DD3000BB966 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DF849AB30549DD3000BB966 /* Assets.xcassets */; };
-		6DF849C03054C751000BB966 /* Local.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6DF849BF3054C751000BB966 /* Local.xcconfig */; };
-		6DF849C43054C799000BB966 /* Local.xcconfig.example in Resources */ = {isa = PBXBuildFile; fileRef = 6DF849C33054C799000BB966 /* Local.xcconfig.example */; };
 		6DF849C730559D51000BB966 /* openapi-generator-config.yaml in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849C530559D51000BB966 /* openapi-generator-config.yaml */; };
 		6DF849C830559D51000BB966 /* openapi.yaml in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849C630559D51000BB966 /* openapi.yaml */; };
 		6DF849CE30559E70000BB966 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 6DF849CD30559E70000BB966 /* OpenAPIURLSession */; };
@@ -177,8 +175,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DF849C03054C751000BB966 /* Local.xcconfig in Resources */,
-				6DF849C43054C799000BB966 /* Local.xcconfig.example in Resources */,
 				6DF849B330549DD3000BB966 /* Assets.xcassets in Resources */,
 				6D426806306D479200884316 /* bolobao-Info.plist in Resources */,
 			);
@@ -274,6 +270,7 @@
 		};
 		6DF849A730549953000BB966 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6DF849BF3054C751000BB966 /* Local.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

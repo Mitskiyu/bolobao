@@ -66,25 +66,23 @@ extension Prompt {
     }
 }
 
-#if DEBUG
-    extension Restaurant {
+extension Restaurant {
 
-        static let samples: [Restaurant] = {
-            struct Page: Decodable {
+    static let samples: [Restaurant] = {
+        struct Page: Decodable {
 
-                let data: [Restaurant]
-            }
+            let data: [Restaurant]
+        }
 
-            let url = Bundle.main.url(
-                forResource: "restaurants",
-                withExtension: "json"
-            )!
-            let data = try! Data(contentsOf: url)
-            return try! JSONDecoder()
-                .decode(Page.self, from: data)
-                .data
-        }()
+        let url = Bundle.main.url(
+            forResource: "restaurants",
+            withExtension: "json"
+        )!
+        let data = try! Data(contentsOf: url)
+        return try! JSONDecoder()
+            .decode(Page.self, from: data)
+            .data
+    }()
 
-        static let sample = samples[0]
-    }
-#endif
+    static let sample = samples[0]
+}
