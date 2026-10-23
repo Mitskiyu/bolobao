@@ -83,6 +83,7 @@ struct Discovery: View {
         guard !isFlying, !restaurants.isEmpty else { return }
         isFlying = true
         tapped = save
+        FrameRate.shared.boost()
         withAnimation(.easeOut(duration: 0.16)) {
             tapOpacity = 1
         }
@@ -101,6 +102,7 @@ struct Discovery: View {
             0.45, 0.05, 0.55, 0.95, duration: 0.65)
     ) {
         isFlying = true
+        FrameRate.shared.boost()
         withAnimation(animation) {
             dragX = save ? 640 : -640
         } completion: {
@@ -110,6 +112,7 @@ struct Discovery: View {
             tapOpacity = 0
             tapScale = 1.5
             isFlying = false
+            FrameRate.shared.reset()
         }
     }
 
@@ -121,6 +124,9 @@ struct Discovery: View {
                     let width = abs(value.translation.width)
                     let height = abs(value.translation.height)
                     axis = width > height ? .horizontal : .vertical
+                    if axis == .horizontal {
+                        FrameRate.shared.boost()
+                    }
                 }
                 if axis == .horizontal {
                     dragX = value.translation.width
@@ -143,6 +149,8 @@ struct Discovery: View {
                         .timingCurve(0.2, 0.8, 0.2, 1, duration: 0.42)
                     ) {
                         dragX = 0
+                    } completion: {
+                        FrameRate.shared.reset()
                     }
                 }
             }
