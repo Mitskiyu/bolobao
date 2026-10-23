@@ -5,6 +5,7 @@ extension Discovery {
     struct Profile: View {
 
         let restaurant: Restaurant
+        var isSwiping = false
 
         @State private var scrolled: CGFloat = 0
 
@@ -75,6 +76,7 @@ extension Discovery {
                     }
                     .padding(.horizontal, Paper.gutter)
                 }
+                .scrollDisabled(isSwiping)
                 .contentMargins(.bottom, 3 * Paper.line, for: .scrollContent)
                 .onScrollGeometryChange(for: CGFloat.self) { geometry in
                     geometry.contentOffset.y + geometry.contentInsets.top

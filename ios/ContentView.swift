@@ -7,6 +7,7 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             TopBar()
+                .zIndex(1)
             discovery
         }
         .background(alignment: .top) {
