@@ -16,5 +16,9 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(discovery: Discovery(load: { Restaurant.samples }))
+    ContentView(
+        discovery: Discovery(fetch: { cursor, _ in
+            cursor == nil ? Restaurant.samples : []
+        })
+    )
 }

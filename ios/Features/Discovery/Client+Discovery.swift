@@ -8,11 +8,11 @@ extension Client {
         transport: URLSessionTransport()
     )
 
-    func restaurants(cursor: UUID? = nil, limit: Int? = nil) async throws
+    func restaurants(cursor: String? = nil, limit: Int? = nil) async throws
         -> [Restaurant]
     {
         let resp = try await listRestaurants(
-            query: .init(after: cursor?.uuidString, limit: limit)
+            query: .init(after: cursor, limit: limit)
         )
         switch resp {
         case .ok(let ok):

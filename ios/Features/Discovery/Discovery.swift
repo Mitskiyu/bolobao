@@ -3,11 +3,61 @@ import SwiftUI
 
 struct Discovery: View {
 
-    var load: () async throws -> [Restaurant] = {
-        try await Client.shared.restaurants()
+    @State private var restaurants: [Restaurant] = []
+    @State private var saved: [Restaurant] = []
+    @State private var cursor: String? = nil
+    @State private var isLoading: Bool = false
+    @State private var isDone: Bool = false
+
+    var fetch: (_ cursor: String?, _ limit: Int?) async throws -> [Restaurant] =
+        {
+            cursor,
+            limit in
+            try await Client.shared.restaurants(cursor: cursor, limit: limit)
+        }
+
+    private func load() async {
+        if isLoading || isDone { return }
+
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let page = try await fetch(cursor, nil)
+            if page.isEmpty {
+                isDone = true
+                return
+            }
+
+            restaurants.append(contentsOf: page)
+            cursor = page.last?.id
+        } catch {
+            print(error)
+        }
     }
 
-    @State private var restaurants: [Restaurant] = []
+    private func skip() {
+        guard !restaurants.isEmpty else { return }
+        restaurants.removeFirst()
+
+        refill()
+    }
+
+    private func save() {
+        guard let first = restaurants.first else {
+            return
+        }
+        saved.append(first)
+        restaurants.removeFirst()
+
+        refill()
+    }
+
+    private func refill() {
+        if restaurants.count < 5 {
+            Task { await load() }
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -19,12 +69,14 @@ struct Discovery: View {
         .overlay(alignment: .bottom) {
             HStack {
                 Button {
+                    skip()
                 } label: {
                     Stamp(text: "SKIP", color: .textMuted, seed: 1)
                         .rotationEffect(.degrees(-5))
                 }
                 Spacer()
                 Button {
+                    save()
                 } label: {
                     Stamp(text: "SAVE", color: .accent, seed: 2)
                         .rotationEffect(.degrees(4))
@@ -44,15 +96,11 @@ struct Discovery: View {
             }
         }
         .task {
-            do {
-                restaurants = try await load()
-            } catch {
-                print(error)
-            }
+            await load()
         }
     }
 }
 
 #Preview {
-    Discovery(load: { Restaurant.samples })
+    Discovery(fetch: { cursor, _ in cursor == nil ? Restaurant.samples : [] })
 }
