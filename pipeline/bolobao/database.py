@@ -2,6 +2,7 @@ import logging
 from typing import NamedTuple
 
 import psycopg
+from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
 from bolobao import areas
@@ -154,3 +155,19 @@ def upsert_profiles(con: psycopg.Connection, profiles: list[Profile]):
     )
 
     log.info("changed %d profiles", cur.rowcount)
+
+
+def get_place(con: psycopg.Connection, fsq_id: str) -> Place | None:
+    cur = con.cursor(row_factory=dict_row)
+    row = cur.execute(
+        """
+        SELECT
+            fsq_id AS id, name, address, locality,
+            district, district_zh, lat, lon, labels
+        FROM restaurants
+        WHERE fsq_id = %s
+        """,
+        [fsq_id],
+    ).fetchone()
+
+    return Place(**row) if row else None
