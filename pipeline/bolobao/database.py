@@ -95,9 +95,9 @@ def profiles(
     return out
 
 
-def upsert_restaurants(conn: psycopg.Connection, restaurants: list[Restaurant]):
+def upsert_restaurants(con: psycopg.Connection, restaurants: list[Restaurant]):
     log.info("upserting %d restaurants", len(restaurants))
-    cur = conn.cursor()
+    cur = con.cursor()
     cur.executemany(
         """
         INSERT INTO restaurants
@@ -131,9 +131,9 @@ def upsert_restaurants(conn: psycopg.Connection, restaurants: list[Restaurant]):
     log.info("changed %d restaurants", cur.rowcount)
 
 
-def upsert_profiles(conn: psycopg.Connection, profiles: list[Profile]):
+def upsert_profiles(con: psycopg.Connection, profiles: list[Profile]):
     log.info("upserting %d profiles", len(profiles))
-    cur = conn.cursor()
+    cur = con.cursor()
     cur.executemany(
         """
         INSERT INTO restaurant_profiles
