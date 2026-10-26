@@ -25,7 +25,7 @@ def main():
     load_dotenv()
     nebius_key = os.environ["NEBIUS_KEY"]
     bucket_name = os.environ["S3_BUCKET"]
-    places_key = os.environ["PLACES_KEY"]
+    places_key = os.environ["SHAM_SHUI_PO_PLACES_KEY"]
 
     here = Path(__file__).resolve().parent
     pipeline = here.parent
