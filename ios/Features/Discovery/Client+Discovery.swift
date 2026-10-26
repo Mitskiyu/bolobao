@@ -11,7 +11,7 @@ extension Client {
     func restaurants(cursor: String? = nil, limit: Int? = nil) async throws
         -> [Restaurant]
     {
-        let resp = try await listRestaurants(
+        let resp = try await listProfiles(
             query: .init(after: cursor, limit: limit)
         )
         switch resp {

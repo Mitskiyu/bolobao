@@ -1,6 +1,6 @@
 import Foundation
 
-typealias Restaurant = Components.Schemas.Restaurant
+typealias Restaurant = Components.Schemas.RestaurantProfile
 extension Restaurant: Identifiable {
 
     var seed: Int {

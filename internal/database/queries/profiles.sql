@@ -1,4 +1,4 @@
--- name: ListRestaurants :many
+-- name: ListProfiles :many
 WITH cur AS (
     SELECT score, restaurant_id AS id
     FROM restaurant_profiles

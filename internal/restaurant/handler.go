@@ -26,9 +26,9 @@ func NewHandler(service *Service) *Handler {
 	}
 }
 
-func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ListProfiles(w http.ResponseWriter, r *http.Request) {
 	type res struct {
-		Data []restaurant `json:"data"`
+		Data []profile `json:"data"`
 	}
 
 	ctx := r.Context()
@@ -46,14 +46,14 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rests, err := h.service.list(ctx, cur, limit)
+	profiles, err := h.service.listProfiles(ctx, cur, limit)
 	if err != nil {
 		log.Printf("%v at %s", err, r.URL)
 		httpx.Error(w, "INTERNAL_ERROR", "internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	httpx.Write(w, res{Data: rests}, http.StatusOK)
+	httpx.Write(w, res{Data: profiles}, http.StatusOK)
 }
 
 func parseCursor(q url.Values) (uuid.UUID, error) {

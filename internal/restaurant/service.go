@@ -10,7 +10,7 @@ import (
 )
 
 type store interface {
-	ListRestaurants(ctx context.Context, arg database.ListRestaurantsParams) ([]database.ListRestaurantsRow, error)
+	ListProfiles(ctx context.Context, arg database.ListProfilesParams) ([]database.ListProfilesRow, error)
 }
 
 type Service struct {
@@ -23,31 +23,31 @@ func NewService(store store) *Service {
 	}
 }
 
-func (s *Service) list(ctx context.Context, cursor uuid.UUID, limit int) ([]restaurant, error) {
-	params := database.ListRestaurantsParams{
+func (s *Service) listProfiles(ctx context.Context, cursor uuid.UUID, limit int) ([]profile, error) {
+	params := database.ListProfilesParams{
 		Cursor:   cursor,
 		RowLimit: int32(limit),
 	}
 
-	rests, err := s.store.ListRestaurants(ctx, params)
+	rows, err := s.store.ListProfiles(ctx, params)
 	if err != nil {
 		return nil, err
 	}
 
-	out := make([]restaurant, 0, len(rests))
-	for _, r := range rests {
-		rest, err := fromRow(r)
+	out := make([]profile, 0, len(rows))
+	for _, r := range rows {
+		p, err := fromRow(r)
 		if err != nil {
-			return nil, fmt.Errorf("failed to conv restaurant %s: %w", r.ID, err)
+			return nil, fmt.Errorf("failed to conv profile %s: %w", r.ID, err)
 		}
-		out = append(out, rest)
+		out = append(out, p)
 	}
 
 	return out, nil
 }
 
-func fromRow(row database.ListRestaurantsRow) (restaurant, error) {
-	r := restaurant{
+func fromRow(row database.ListProfilesRow) (profile, error) {
+	r := profile{
 		ID:       row.ID,
 		Name:     row.Name,
 		Category: row.Category,
@@ -63,7 +63,7 @@ func fromRow(row database.ListRestaurantsRow) (restaurant, error) {
 	}
 
 	if err := json.Unmarshal(row.Answers, &r.Answers); err != nil {
-		return restaurant{}, fmt.Errorf("unmarshal answers: %w", err)
+		return profile{}, fmt.Errorf("unmarshal answers: %w", err)
 	}
 
 	return r, nil

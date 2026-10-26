@@ -2,7 +2,7 @@ package restaurant
 
 import "uuid"
 
-type restaurant struct {
+type profile struct {
 	ID         uuid.UUID `json:"id"`
 	Name       string    `json:"name"`
 	Category   string    `json:"category"`

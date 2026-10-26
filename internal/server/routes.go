@@ -17,7 +17,7 @@ func routes(h Handlers) http.Handler {
 		_, _ = w.Write([]byte("OK"))
 	})
 
-	mux.HandleFunc("GET /restaurants", h.Restaurant.List)
+	mux.HandleFunc("GET /profiles", h.Restaurant.ListProfiles)
 
 	return mux
 }
