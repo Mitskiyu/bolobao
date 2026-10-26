@@ -1,6 +1,5 @@
 import asyncio
 import csv
-import json
 import logging
 import math
 import os
@@ -15,7 +14,7 @@ from mypy_boto3_s3 import S3Client
 from openai import AsyncOpenAI
 from openai.types.shared_params.response_format_json_schema import JSONSchema
 
-from bolobao import bucket, judge, model, places
+from bolobao import bucket, judge, model, places, prompts
 from bolobao.judge import Verdict
 from bolobao.model import Output
 
@@ -49,9 +48,9 @@ def main():
             if p.id in golden
         ]
 
-    enrich_system, enrich_schema = load(pipeline, "enrich")
-    check_system, check_schema = load(pipeline, "check")
-    rate_system, rate_schema = load(pipeline, "rate")
+    enrich_system, enrich_schema = prompts.load("enrich")
+    check_system, check_schema = prompts.load("check")
+    rate_system, rate_schema = prompts.load("rate")
 
     s3 = boto3.client("s3", config=Config(max_pool_connections=32))
     nebius = AsyncOpenAI(
@@ -105,18 +104,6 @@ async def run(
         rate_schema,
         gold_places,
     )
-
-
-def load(pipeline: Path, name: str) -> tuple[str, JSONSchema]:
-    with open(pipeline / f"{name}.json") as f:
-        schema: JSONSchema = json.load(f)
-    with open(pipeline / f"{name}.md") as f:
-        system = (
-            f.read()
-            + "\n\n### Schema\n"
-            + json.dumps(schema, ensure_ascii=False, indent=2)
-        )
-    return system, schema
 
 
 def fetch(bucket_name, s3, golden, outputs_prefix, verdicts_prefix):

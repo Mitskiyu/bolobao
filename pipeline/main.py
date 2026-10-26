@@ -1,5 +1,4 @@
 import asyncio
-import json
 import logging
 import os
 from pathlib import Path
@@ -11,10 +10,18 @@ from botocore.config import Config
 from dotenv import load_dotenv
 from mypy_boto3_s3 import S3Client
 from openai import AsyncOpenAI
-from openai.types.shared_params.response_format_json_schema import JSONSchema
 from tavily import AsyncTavilyClient
 
-from bolobao import areas, bucket, database, judge, model, places, sources
+from bolobao import (
+    areas,
+    bucket,
+    database,
+    judge,
+    model,
+    places,
+    prompts,
+    sources,
+)
 
 log = logging.getLogger(__name__)
 
@@ -61,9 +68,9 @@ async def main():
     tavily = AsyncTavilyClient(tavily_key)
     await sources.fetch_many(bucket_name, s3, tavily, all_places)
 
-    enrich_system, enrich_schema = load(here, "enrich")
-    check_system, check_schema = load(here, "check")
-    rate_system, rate_schema = load(here, "rate")
+    enrich_system, enrich_schema = prompts.load("enrich")
+    check_system, check_schema = prompts.load("check")
+    rate_system, rate_schema = prompts.load("rate")
 
     nebius = AsyncOpenAI(
         base_url="https://api.tokenfactory.us-central1.nebius.com/v1/",
@@ -121,18 +128,6 @@ def snapshot(
         log.info("uploaded %s", key)
 
     return parquet
-
-
-def load(here: Path, name: str) -> tuple[str, JSONSchema]:
-    with open(here / f"{name}.json") as f:
-        schema: JSONSchema = json.load(f)
-    with open(here / f"{name}.md") as f:
-        system = (
-            f.read()
-            + "\n\n### Schema\n"
-            + json.dumps(schema, ensure_ascii=False, indent=2)
-        )
-    return system, schema
 
 
 if __name__ == "__main__":

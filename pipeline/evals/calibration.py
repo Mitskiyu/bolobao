@@ -1,6 +1,5 @@
 import asyncio
 import csv
-import json
 import logging
 import os
 import sys
@@ -11,9 +10,8 @@ import duckdb
 from botocore.config import Config
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
-from openai.types.shared_params.response_format_json_schema import JSONSchema
 
-from bolobao import bucket, judge, places
+from bolobao import bucket, judge, places, prompts
 
 
 def main():
@@ -47,8 +45,8 @@ def main():
             if p.id in golden
         ]
 
-    check_system, check_schema = load(pipeline, "check")
-    rate_system, rate_schema = load(pipeline, "rate")
+    check_system, check_schema = prompts.load("check")
+    rate_system, rate_schema = prompts.load("rate")
 
     s3 = boto3.client("s3", config=Config(max_pool_connections=32))
     nebius = AsyncOpenAI(
@@ -73,18 +71,6 @@ def main():
     verdicts = bucket.get_json_many(bucket_name, s3, judge.PREFIX, found)
 
     report(golden, verdicts)
-
-
-def load(pipeline: Path, name: str) -> tuple[str, JSONSchema]:
-    with open(pipeline / f"{name}.json") as f:
-        schema: JSONSchema = json.load(f)
-    with open(pipeline / f"{name}.md") as f:
-        system = (
-            f.read()
-            + "\n\n### Schema\n"
-            + json.dumps(schema, ensure_ascii=False, indent=2)
-        )
-    return system, schema
 
 
 def report(golden: dict[str, dict[str, str]], verdicts: dict[str, judge.Verdict]):
