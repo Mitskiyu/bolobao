@@ -16,6 +16,10 @@ class Restaurant(NamedTuple):
     category: str
     address: str
     area: str
+    locality: str
+    district: str
+    district_zh: str
+    labels: list[str]
     lat: float
     lon: float
 
@@ -47,6 +51,10 @@ def restaurants(places: list[Place]) -> list[Restaurant]:
                 category=dining.split(" > ")[-1],
                 address=place.address or "",
                 area=areas.en(place),
+                locality=place.locality or "",
+                district=place.district,
+                district_zh=place.district_zh,
+                labels=place.labels,
                 lat=place.lat,
                 lon=place.lon,
             )
@@ -93,20 +101,29 @@ def upsert_restaurants(conn: psycopg.Connection, restaurants: list[Restaurant]):
     cur.executemany(
         """
         INSERT INTO restaurants
-            (fsq_id, name, category, address, area, lat, lon)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+            (fsq_id, name, category, address, area, locality, district,
+            district_zh, labels, lat, lon)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (fsq_id) DO UPDATE SET
             name = EXCLUDED.name,
             category = EXCLUDED.category,
             address = EXCLUDED.address,
             area = EXCLUDED.area,
+            locality = EXCLUDED.locality,
+            district = EXCLUDED.district,
+            district_zh = EXCLUDED.district_zh,
+            labels = EXCLUDED.labels,
             lat = EXCLUDED.lat,
             lon = EXCLUDED.lon
         WHERE (restaurants.name, restaurants.category, restaurants.address,
-            restaurants.area, restaurants.lat, restaurants.lon)
+            restaurants.area, restaurants.locality, restaurants.district,
+            restaurants.district_zh, restaurants.labels, restaurants.lat,
+            restaurants.lon)
         IS DISTINCT FROM
             (EXCLUDED.name, EXCLUDED.category, EXCLUDED.address,
-            EXCLUDED.area, EXCLUDED.lat, EXCLUDED.lon)
+            EXCLUDED.area, EXCLUDED.locality, EXCLUDED.district,
+            EXCLUDED.district_zh, EXCLUDED.labels, EXCLUDED.lat,
+            EXCLUDED.lon)
         """,
         restaurants,
     )

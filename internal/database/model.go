@@ -16,6 +16,10 @@ type Restaurant struct {
 	Category   string
 	Address    string
 	Area       string
+	Locality   string
+	District   string
+	DistrictZh string
+	Labels     []string
 	Lat        float64
 	Lon        float64
 	CreatedAt  pgtype.Timestamptz
