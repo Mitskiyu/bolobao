@@ -9,6 +9,7 @@ import duckdb
 import psycopg
 from botocore.config import Config
 from dotenv import load_dotenv
+from mypy_boto3_s3 import S3Client
 from openai import AsyncOpenAI
 from openai.types.shared_params.response_format_json_schema import JSONSchema
 from tavily import AsyncTavilyClient
@@ -30,13 +31,12 @@ async def main():
     host = os.environ["PG_HOST"]
     port = os.environ["PG_PORT"]
     name = os.environ["PG_NAME"]
-    places_key = os.environ["PLACES_KEY"]
+    places_key = os.environ["SHAM_SHUI_PO_PLACES_KEY"]
+    hk_places_key = os.environ["HK_PLACES_KEY"]
 
     here = Path(__file__).resolve().parent
     data_dir = here.parent / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
-    parquet = data_dir / places_key
-    parquet.parent.mkdir(parents=True, exist_ok=True)
 
     logging.basicConfig(
         level=logging.INFO,
@@ -47,20 +47,16 @@ async def main():
     logging.getLogger("httpx2").setLevel(logging.WARNING)
 
     s3 = boto3.client("s3", config=Config(max_pool_connections=32))
-    if parquet.exists():
-        log.info("using local %s", parquet)
-    elif bucket.get_file(bucket_name, s3, places_key, parquet):
-        log.info("downloaded %s", places_key)
-    else:
-        log.warning("no parquet snapshot found, rebuilding from fsq")
-        with duckdb.connect() as con:
-            places.download(con, fsq_token)
-            places.export(con, areas.DISTRICTS, parquet)
-        s3.upload_file(str(parquet), bucket_name, places_key)
-        log.info("uploaded %s", places_key)
+    parquet = snapshot(
+        bucket_name, s3, fsq_token, data_dir, places_key, ["Sham Shui Po District"]
+    )
+    hk_parquet = snapshot(
+        bucket_name, s3, fsq_token, data_dir, hk_places_key, areas.DISTRICTS
+    )
 
     with duckdb.connect() as con:
         all_places = places.load(con, parquet)
+        hk_places = places.load(con, hk_parquet)
 
     tavily = AsyncTavilyClient(tavily_key)
     await sources.fetch_many(bucket_name, s3, tavily, all_places)
@@ -96,8 +92,35 @@ async def main():
     with psycopg.connect(
         user=user, password=password, host=host, port=port, dbname=name
     ) as conn:
-        database.upsert_restaurants(conn, database.restaurants(all_places))
+        unique = {p.id: p for p in hk_places + all_places}
+        database.upsert_restaurants(conn, database.restaurants(list(unique.values())))
         database.upsert_profiles(conn, database.profiles(all_places, outputs, verdicts))
+
+
+def snapshot(
+    bucket_name: str,
+    s3: S3Client,
+    fsq_token: str,
+    data_dir: Path,
+    key: str,
+    districts: list[str],
+) -> Path:
+    parquet = data_dir / key
+    parquet.parent.mkdir(parents=True, exist_ok=True)
+
+    if parquet.exists():
+        log.info("using local %s", parquet)
+    elif bucket.get_file(bucket_name, s3, key, parquet):
+        log.info("downloaded %s", key)
+    else:
+        log.warning("no %s snapshot found, rebuilding from fsq", key)
+        with duckdb.connect() as con:
+            places.download(con, fsq_token)
+            places.export(con, districts, parquet)
+        s3.upload_file(str(parquet), bucket_name, key)
+        log.info("uploaded %s", key)
+
+    return parquet
 
 
 def load(here: Path, name: str) -> tuple[str, JSONSchema]:

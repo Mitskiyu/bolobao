@@ -1,7 +1,26 @@
-# only sham shui po for now
 from bolobao.places import Place
 
-DISTRICTS = ["Sham Shui Po District"]
+DISTRICTS = [
+    "Central and Western District",
+    "Wan Chai District",
+    "Eastern District",
+    "Southern District",
+    "Yau Tsim Mong District",
+    "Sham Shui Po District",
+    "Kowloon City District",
+    "Wong Tai Sin District",
+    "Kwun Tong District",
+    "Kwai Tsing District",
+    "Tsuen Wan District",
+    "Tuen Mun District",
+    "Yuen Long District",
+    "North District",
+    "Tai Po District",
+    "Sha Tin District",
+    "Sai Kung District",
+    "Islands District",
+]
+
 AREA_ZH = {
     "mei foo": "美孚",
     "lai chi kok": "荔枝角",
