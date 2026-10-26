@@ -96,7 +96,8 @@ async def main():
     with psycopg.connect(
         user=user, password=password, host=host, port=port, dbname=name
     ) as conn:
-        database.upsert(conn, database.rows(all_places, outputs, verdicts))
+        database.upsert_restaurants(conn, database.restaurants(all_places))
+        database.upsert_profiles(conn, database.profiles(all_places, outputs, verdicts))
 
 
 def load(here: Path, name: str) -> tuple[str, JSONSchema]:

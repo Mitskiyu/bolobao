@@ -16,11 +16,17 @@ type Restaurant struct {
 	Category   string
 	Address    string
 	Area       string
-	Answers    []byte
-	Score      float64
-	PriceLevel pgtype.Int4
 	Lat        float64
 	Lon        float64
 	CreatedAt  pgtype.Timestamptz
 	ModifiedAt pgtype.Timestamptz
+}
+
+type RestaurantProfile struct {
+	RestaurantID uuid.UUID
+	Answers      []byte
+	Score        float64
+	PriceLevel   pgtype.Int4
+	CreatedAt    pgtype.Timestamptz
+	ModifiedAt   pgtype.Timestamptz
 }
