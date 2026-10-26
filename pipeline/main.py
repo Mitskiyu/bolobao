@@ -99,9 +99,9 @@ async def main():
     with psycopg.connect(
         user=user, password=password, host=host, port=port, dbname=name
     ) as con:
-        unique = {p.id: p for p in hk_places + all_places}
-        database.upsert_restaurants(con, database.restaurants(list(unique.values())))
-        database.upsert_profiles(con, database.profiles(all_places, outputs, verdicts))
+        unique = list({p.id: p for p in hk_places + all_places}.values())
+        database.upsert_restaurants(con, database.restaurants(unique))
+        database.upsert_profiles(con, database.profiles(unique, outputs, verdicts))
 
 
 def snapshot(
