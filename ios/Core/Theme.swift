@@ -15,6 +15,8 @@ extension Font {
     static let wordmark = Font.custom("NotoSansHK-Black", fixedSize: 22)
     static let printedHeader = Font.custom("NotoSansHK-Black", fixedSize: 14)
     static let small = Font.custom("NotoSansHK-Regular", fixedSize: 13)
+    static let tab = Font.custom("NotoSansHK-Regular", fixedSize: 11)
+    static let tabSelected = Font.custom("NotoSansHK-Bold", fixedSize: 11)
     static let sheetTitle = Font.custom("NotoSansHK-Bold", fixedSize: 17)
     static let sheetButton = Font.custom("NotoSansHK-Regular", fixedSize: 17)
     static let label = Font.custom("NotoSansHK-Bold", fixedSize: 11)
