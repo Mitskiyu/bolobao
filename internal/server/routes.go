@@ -18,6 +18,7 @@ func routes(h Handlers) http.Handler {
 	})
 
 	mux.HandleFunc("GET /profiles", h.Restaurant.ListProfiles)
+	mux.HandleFunc("POST /restaurants/{id}/profile", h.Restaurant.CreateProfile)
 
 	return mux
 }

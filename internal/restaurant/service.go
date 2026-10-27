@@ -1,25 +1,39 @@
 package restaurant
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"iter"
+	"net/http"
+	"strings"
 	"uuid"
 
 	"bolobao/internal/database"
+
+	"github.com/jackc/pgx/v5"
 )
+
+var errNotFound = errors.New("not found")
 
 type store interface {
 	ListProfiles(ctx context.Context, arg database.ListProfilesParams) ([]database.ListProfilesRow, error)
+	GetFsqID(ctx context.Context, id uuid.UUID) (string, error)
 }
 
 type Service struct {
-	store store
+	store      store
+	writerAddr string
+	client     *http.Client
 }
 
-func NewService(store store) *Service {
+func NewService(store store, writerAddr string) *Service {
 	return &Service{
-		store: store,
+		store:      store,
+		writerAddr: writerAddr,
+		client:     &http.Client{},
 	}
 }
 
@@ -44,6 +58,56 @@ func (s *Service) listProfiles(ctx context.Context, cursor uuid.UUID, limit int)
 	}
 
 	return out, nil
+}
+
+func (s *Service) createProfile(ctx context.Context, id uuid.UUID) (iter.Seq[event], error) {
+	fsqID, err := s.store.GetFsqID(ctx, id)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, errNotFound
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	url := s.writerAddr + "/profiles/" + fsqID
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		_ = res.Body.Close()
+		return nil, fmt.Errorf("writer returned %s", res.Status)
+	}
+
+	events := func(yield func(event) bool) {
+		defer func() { _ = res.Body.Close() }()
+
+		sc := bufio.NewScanner(res.Body)
+		for sc.Scan() {
+			data, ok := strings.CutPrefix(sc.Text(), "data: ")
+			if !ok {
+				continue
+			}
+
+			var e event
+			if err := json.Unmarshal([]byte(data), &e); err != nil {
+				continue
+			}
+
+			if !yield(e) {
+				return
+			}
+		}
+	}
+
+	return events, nil
 }
 
 func fromRow(row database.ListProfilesRow) (profile, error) {

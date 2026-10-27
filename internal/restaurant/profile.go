@@ -47,3 +47,19 @@ const (
 	Drinks                       prompt = "drinks"
 	RoomVibe                     prompt = "room_vibe"
 )
+
+type event struct {
+	Phase   phase    `json:"phase"`
+	Profile *profile `json:"profile,omitempty"`
+}
+
+type phase string
+
+const (
+	Read    phase = "read"
+	Wrote   phase = "wrote"
+	Checked phase = "checked"
+	Done    phase = "done"
+	Refused phase = "refused"
+	Failed  phase = "failed"
+)

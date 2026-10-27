@@ -1,19 +1,24 @@
 package restaurant
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 	"uuid"
 
 	"bolobao/internal/httpx"
 )
 
 const (
-	defaultLimit = 20
-	maxLimit     = 100
+	defaultLimit  = 20
+	maxLimit      = 100
+	streamTimeout = 3 * time.Minute
 )
 
 type Handler struct {
@@ -54,6 +59,53 @@ func (h *Handler) ListProfiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpx.Write(w, res{Data: profiles}, http.StatusOK)
+}
+
+func (h *Handler) CreateProfile(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(
+		context.WithoutCancel(r.Context()),
+		streamTimeout,
+	)
+	defer cancel()
+
+	id, err := uuid.Parse(r.PathValue("id"))
+	if err != nil {
+		httpx.Error(w, "INVALID_ID", "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	events, err := h.service.createProfile(ctx, id)
+	if errors.Is(err, errNotFound) {
+		httpx.Error(w, "NOT_FOUND", "restaurant not found", http.StatusNotFound)
+		return
+	}
+
+	if err != nil {
+		log.Printf("%v at %s", err, r.URL)
+		httpx.Error(w, "UNAVAILABLE", "service unavailable", http.StatusServiceUnavailable)
+		return
+	}
+
+	rc := http.NewResponseController(w)
+	if err := rc.SetWriteDeadline(time.Now().Add(streamTimeout)); err != nil {
+		log.Printf("%v at %s", err, r.URL)
+	}
+
+	header := w.Header()
+	header.Set("Content-Type", "text/event-stream")
+	header.Set("Cache-Control", "no-cache")
+	w.WriteHeader(http.StatusOK)
+
+	for e := range events {
+		b, err := json.Marshal(e)
+		if err != nil {
+			log.Printf("%v at %s", err, r.URL)
+			continue
+		}
+
+		_, _ = fmt.Fprintf(w, "data: %s\n\n", b)
+		_ = rc.Flush()
+	}
 }
 
 func parseCursor(q url.Values) (uuid.UUID, error) {

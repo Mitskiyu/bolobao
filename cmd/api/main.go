@@ -32,6 +32,7 @@ func run(getenv func(string, string) string) error {
 		pgHost     = getenv("PG_HOST", "")
 		pgPort     = getenv("PG_PORT", "")
 		pgName     = getenv("PG_NAME", "")
+		writerAddr = getenv("WRITER_ADDR", "http://localhost:8000")
 	)
 
 	log.Println("Connecting to postgres...")
@@ -48,7 +49,7 @@ func run(getenv func(string, string) string) error {
 
 	q := database.New(db)
 	h := server.Handlers{
-		Restaurant: restaurant.NewHandler(restaurant.NewService(q)),
+		Restaurant: restaurant.NewHandler(restaurant.NewService(q, writerAddr)),
 	}
 
 	s := server.New(addr, h)
