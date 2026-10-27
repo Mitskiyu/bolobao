@@ -5,9 +5,18 @@ struct AddPlace: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(title: "Add a place") { dismiss() }
-            Search()
+        NavigationStack {
+            VStack(spacing: 0) {
+                SheetHeader(title: "Add a place", button: "Cancel") {
+                    dismiss()
+                }
+                Search()
+            }
+            .background(.surface)
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: Place.self) { place in
+                Writing(place: place)
+            }
         }
         .presentationBackground(.surface)
         .presentationDragIndicator(.visible)
@@ -20,34 +29,4 @@ struct AddPlace: View {
         .sheet(isPresented: .constant(true)) {
             AddPlace()
         }
-}
-
-private struct Header: View {
-
-    let title: String
-    let cancel: () -> Void
-
-    var body: some View {
-        ZStack {
-            Text(title)
-                .font(.sheetTitle)
-                .foregroundStyle(.text)
-            HStack {
-                Button("Cancel", action: cancel)
-                    .font(.sheetButton)
-                    .foregroundStyle(.accent)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 10)
-                Spacer()
-            }
-        }
-        .padding(.horizontal, 12)
-        .frame(height: 44)
-        .padding(.top, 20)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(.surfaceMuted)
-                .frame(height: 1)
-        }
-    }
 }

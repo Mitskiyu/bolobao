@@ -25,7 +25,10 @@ struct SearchResults: View {
                     Header()
                     VStack(spacing: 0) {
                         ForEach(places) { place in
-                            Row(place: place)
+                            NavigationLink(value: place) {
+                                Row(place: place)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(.top, 4)
@@ -169,6 +172,7 @@ private struct Row: View {
         }
         .padding(.vertical, 10)
         .frame(minHeight: 72)
+        .contentShape(.rect)
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(.rule)

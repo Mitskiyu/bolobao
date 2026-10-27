@@ -28,6 +28,8 @@ extension Font {
     static let message = Font.custom("NotoSansHK-Regular", fixedSize: 16)
     static let inkButton = Font.custom("NotoSansHK-Black", fixedSize: 16)
     static let slipStatus = Font.custom("NotoSansHK-Bold", fixedSize: 12)
+    static let step = Font.custom("NotoSansHK-Regular", fixedSize: 16)
+    static let stepCurrent = Font.custom("NotoSansHK-Bold", fixedSize: 16)
 
     static func hand(_ size: CGFloat) -> Font {
         .custom("Caveat-Bold", fixedSize: size)
