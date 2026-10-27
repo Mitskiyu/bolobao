@@ -162,7 +162,7 @@ struct Discovery: View {
             ForEach(restaurants.prefix(2).reversed()) { restaurant in
                 let isTop = restaurant.id == restaurants.first?.id
                 let x = isTop ? dragX : 0
-                Profile(
+                Slip(
                     restaurant: restaurant,
                     isSwiping: isTop && axis == .horizontal
                 )
