@@ -1,3 +1,11 @@
+-- name: GetProfile :one
+SELECT
+    r.id, r.name, r.category, r.address, r.area,
+    p.answers, p.score, p.price_level, r.lat, r.lon
+FROM restaurants r
+JOIN restaurant_profiles p ON p.restaurant_id = r.id
+WHERE r.id = $1;
+
 -- name: ListProfiles :many
 WITH cur AS (
     SELECT score, restaurant_id AS id

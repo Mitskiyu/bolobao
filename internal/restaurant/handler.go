@@ -31,36 +31,6 @@ func NewHandler(service *Service) *Handler {
 	}
 }
 
-func (h *Handler) ListProfiles(w http.ResponseWriter, r *http.Request) {
-	type res struct {
-		Data []profile `json:"data"`
-	}
-
-	ctx := r.Context()
-	params := r.URL.Query()
-
-	cur, err := parseCursor(params)
-	if err != nil {
-		httpx.Error(w, "INVALID_CURSOR", err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	limit, err := parseLimit(params)
-	if err != nil {
-		httpx.Error(w, "INVALID_LIMIT", err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	profiles, err := h.service.listProfiles(ctx, cur, limit)
-	if err != nil {
-		log.Printf("%v at %s", err, r.URL)
-		httpx.Error(w, "INTERNAL_ERROR", "internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	httpx.Write(w, res{Data: profiles}, http.StatusOK)
-}
-
 func (h *Handler) CreateProfile(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(
 		context.WithoutCancel(r.Context()),
@@ -106,6 +76,36 @@ func (h *Handler) CreateProfile(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintf(w, "data: %s\n\n", b)
 		_ = rc.Flush()
 	}
+}
+
+func (h *Handler) ListProfiles(w http.ResponseWriter, r *http.Request) {
+	type res struct {
+		Data []profile `json:"data"`
+	}
+
+	ctx := r.Context()
+	params := r.URL.Query()
+
+	cur, err := parseCursor(params)
+	if err != nil {
+		httpx.Error(w, "INVALID_CURSOR", err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	limit, err := parseLimit(params)
+	if err != nil {
+		httpx.Error(w, "INVALID_LIMIT", err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	profiles, err := h.service.listProfiles(ctx, cur, limit)
+	if err != nil {
+		log.Printf("%v at %s", err, r.URL)
+		httpx.Error(w, "INTERNAL_ERROR", "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	httpx.Write(w, res{Data: profiles}, http.StatusOK)
 }
 
 func parseCursor(q url.Values) (uuid.UUID, error) {

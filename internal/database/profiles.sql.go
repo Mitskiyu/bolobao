@@ -7,10 +7,50 @@ package database
 
 import (
 	"context"
+	"uuid"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"uuid"
 )
+
+const getProfile = `-- name: GetProfile :one
+SELECT
+    r.id, r.name, r.category, r.address, r.area,
+    p.answers, p.score, p.price_level, r.lat, r.lon
+FROM restaurants r
+JOIN restaurant_profiles p ON p.restaurant_id = r.id
+WHERE r.id = $1
+`
+
+type GetProfileRow struct {
+	ID         uuid.UUID
+	Name       string
+	Category   string
+	Address    string
+	Area       string
+	Answers    []byte
+	Score      float64
+	PriceLevel pgtype.Int4
+	Lat        float64
+	Lon        float64
+}
+
+func (q *Queries) GetProfile(ctx context.Context, id uuid.UUID) (GetProfileRow, error) {
+	row := q.db.QueryRow(ctx, getProfile, id)
+	var i GetProfileRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Category,
+		&i.Address,
+		&i.Area,
+		&i.Answers,
+		&i.Score,
+		&i.PriceLevel,
+		&i.Lat,
+		&i.Lon,
+	)
+	return i, err
+}
 
 const listProfiles = `-- name: ListProfiles :many
 WITH cur AS (

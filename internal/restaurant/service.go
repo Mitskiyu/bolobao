@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"log"
 	"net/http"
 	"strings"
 	"uuid"
@@ -19,8 +20,9 @@ import (
 var errNotFound = errors.New("not found")
 
 type store interface {
-	ListProfiles(ctx context.Context, arg database.ListProfilesParams) ([]database.ListProfilesRow, error)
 	GetFsqID(ctx context.Context, id uuid.UUID) (string, error)
+	GetProfile(ctx context.Context, id uuid.UUID) (database.GetProfileRow, error)
+	ListProfiles(ctx context.Context, arg database.ListProfilesParams) ([]database.ListProfilesRow, error)
 }
 
 type Service struct {
@@ -35,29 +37,6 @@ func NewService(store store, writerAddr string) *Service {
 		writerAddr: writerAddr,
 		client:     &http.Client{},
 	}
-}
-
-func (s *Service) listProfiles(ctx context.Context, cursor uuid.UUID, limit int) ([]profile, error) {
-	params := database.ListProfilesParams{
-		Cursor:   cursor,
-		RowLimit: int32(limit),
-	}
-
-	rows, err := s.store.ListProfiles(ctx, params)
-	if err != nil {
-		return nil, err
-	}
-
-	out := make([]profile, 0, len(rows))
-	for _, r := range rows {
-		p, err := fromRow(r)
-		if err != nil {
-			return nil, fmt.Errorf("failed to conv profile %s: %w", r.ID, err)
-		}
-		out = append(out, p)
-	}
-
-	return out, nil
 }
 
 func (s *Service) createProfile(ctx context.Context, id uuid.UUID) (iter.Seq[event], error) {
@@ -101,6 +80,16 @@ func (s *Service) createProfile(ctx context.Context, id uuid.UUID) (iter.Seq[eve
 				continue
 			}
 
+			if e.Phase == Done {
+				p, err := s.getProfile(ctx, id)
+				if err != nil {
+					log.Printf("failed to get profile %s: %v", id, err)
+					e.Phase = Failed
+				} else {
+					e.Profile = &p
+				}
+			}
+
 			if !yield(e) {
 				return
 			}
@@ -108,6 +97,38 @@ func (s *Service) createProfile(ctx context.Context, id uuid.UUID) (iter.Seq[eve
 	}
 
 	return events, nil
+}
+
+func (s *Service) getProfile(ctx context.Context, id uuid.UUID) (profile, error) {
+	row, err := s.store.GetProfile(ctx, id)
+	if err != nil {
+		return profile{}, err
+	}
+
+	return fromRow(database.ListProfilesRow(row))
+}
+
+func (s *Service) listProfiles(ctx context.Context, cursor uuid.UUID, limit int) ([]profile, error) {
+	params := database.ListProfilesParams{
+		Cursor:   cursor,
+		RowLimit: int32(limit),
+	}
+
+	rows, err := s.store.ListProfiles(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]profile, 0, len(rows))
+	for _, r := range rows {
+		p, err := fromRow(r)
+		if err != nil {
+			return nil, fmt.Errorf("failed to conv profile %s: %w", r.ID, err)
+		}
+		out = append(out, p)
+	}
+
+	return out, nil
 }
 
 func fromRow(row database.ListProfilesRow) (profile, error) {
