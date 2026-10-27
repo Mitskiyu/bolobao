@@ -10,14 +10,21 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 	"uuid"
 
 	"bolobao/internal/database"
 
 	"github.com/jackc/pgx/v5"
+	"golang.org/x/time/rate"
 )
 
-var errNotFound = errors.New("not found")
+const maxAdds = 30
+
+var (
+	errNotFound = errors.New("not found")
+	errLimited  = errors.New("rate limited")
+)
 
 type store interface {
 	GetFsqID(ctx context.Context, id uuid.UUID) (string, error)
@@ -29,6 +36,7 @@ type Service struct {
 	store      store
 	writerAddr string
 	client     *http.Client
+	adds       *rate.Limiter
 }
 
 func NewService(store store, writerAddr string) *Service {
@@ -36,6 +44,7 @@ func NewService(store store, writerAddr string) *Service {
 		store:      store,
 		writerAddr: writerAddr,
 		client:     &http.Client{},
+		adds:       rate.NewLimiter(rate.Every(24*time.Hour/maxAdds), maxAdds),
 	}
 }
 
@@ -47,6 +56,10 @@ func (s *Service) createProfile(ctx context.Context, id uuid.UUID) (iter.Seq[eve
 
 	if err != nil {
 		return nil, err
+	}
+
+	if !s.adds.Allow() {
+		return nil, errLimited
 	}
 
 	url := s.writerAddr + "/profiles/" + fsqID

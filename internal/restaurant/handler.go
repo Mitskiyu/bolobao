@@ -50,6 +50,11 @@ func (h *Handler) CreateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if errors.Is(err, errLimited) {
+		httpx.Error(w, "RATE_LIMITED", "too many profiles today", http.StatusTooManyRequests)
+		return
+	}
+
 	if err != nil {
 		log.Printf("%v at %s", err, r.URL)
 		httpx.Error(w, "UNAVAILABLE", "service unavailable", http.StatusServiceUnavailable)
