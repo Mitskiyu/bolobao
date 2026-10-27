@@ -30,6 +30,7 @@ type store interface {
 	GetFsqID(ctx context.Context, id uuid.UUID) (string, error)
 	GetProfile(ctx context.Context, id uuid.UUID) (database.GetProfileRow, error)
 	ListProfiles(ctx context.Context, arg database.ListProfilesParams) ([]database.ListProfilesRow, error)
+	SearchRestaurants(ctx context.Context, query string) ([]database.SearchRestaurantsRow, error)
 }
 
 type Service struct {
@@ -139,6 +140,20 @@ func (s *Service) listProfiles(ctx context.Context, cursor uuid.UUID, limit int)
 			return nil, fmt.Errorf("failed to conv profile %s: %w", r.ID, err)
 		}
 		out = append(out, p)
+	}
+
+	return out, nil
+}
+
+func (s *Service) searchRestaurants(ctx context.Context, query string) ([]restaurant, error) {
+	rows, err := s.store.SearchRestaurants(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]restaurant, 0, len(rows))
+	for _, r := range rows {
+		out = append(out, restaurant(r))
 	}
 
 	return out, nil

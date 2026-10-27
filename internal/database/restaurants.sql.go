@@ -23,3 +23,54 @@ func (q *Queries) GetFsqID(ctx context.Context, id uuid.UUID) (string, error) {
 	err := row.Scan(&fsq_id)
 	return fsq_id, err
 }
+
+const searchRestaurants = `-- name: SearchRestaurants :many
+SELECT
+    r.id, r.name, r.category, r.address, r.area, r.lat, r.lon,
+    (p.restaurant_id IS NOT NULL)::bool AS has_profile
+FROM restaurants r
+LEFT JOIN restaurant_profiles p ON p.restaurant_id = r.id
+WHERE r.name ILIKE '%' || $1::text || '%'
+ORDER BY length(r.name), r.name
+LIMIT 20
+`
+
+type SearchRestaurantsRow struct {
+	ID         uuid.UUID
+	Name       string
+	Category   string
+	Address    string
+	Area       string
+	Lat        float64
+	Lon        float64
+	HasProfile bool
+}
+
+func (q *Queries) SearchRestaurants(ctx context.Context, query string) ([]SearchRestaurantsRow, error) {
+	rows, err := q.db.Query(ctx, searchRestaurants, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SearchRestaurantsRow
+	for rows.Next() {
+		var i SearchRestaurantsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Category,
+			&i.Address,
+			&i.Area,
+			&i.Lat,
+			&i.Lon,
+			&i.HasProfile,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

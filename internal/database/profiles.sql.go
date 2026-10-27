@@ -7,9 +7,9 @@ package database
 
 import (
 	"context"
-	"uuid"
 
 	"github.com/jackc/pgx/v5/pgtype"
+	"uuid"
 )
 
 const getProfile = `-- name: GetProfile :one

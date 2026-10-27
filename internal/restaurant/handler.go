@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
+	"unicode/utf8"
 	"uuid"
 
 	"bolobao/internal/httpx"
@@ -19,6 +21,8 @@ const (
 	defaultLimit  = 20
 	maxLimit      = 100
 	streamTimeout = 3 * time.Minute
+	minQuery      = 2
+	maxQuery      = 100
 )
 
 type Handler struct {
@@ -111,6 +115,34 @@ func (h *Handler) ListProfiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpx.Write(w, res{Data: profiles}, http.StatusOK)
+}
+
+func (h *Handler) SearchRestaurants(w http.ResponseWriter, r *http.Request) {
+	type res struct {
+		Data []restaurant `json:"data"`
+	}
+
+	ctx := r.Context()
+	q := strings.TrimSpace(r.URL.Query().Get("q"))
+
+	if n := utf8.RuneCountInString(q); n < minQuery || n > maxQuery {
+		httpx.Error(
+			w,
+			"INVALID_QUERY",
+			fmt.Sprintf("q must be between %d and %d characters", minQuery, maxQuery),
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	restaurants, err := h.service.searchRestaurants(ctx, q)
+	if err != nil {
+		log.Printf("%v at %s", err, r.URL)
+		httpx.Error(w, "INTERNAL_ERROR", "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	httpx.Write(w, res{Data: restaurants}, http.StatusOK)
 }
 
 func parseCursor(q url.Values) (uuid.UUID, error) {
