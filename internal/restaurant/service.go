@@ -9,6 +9,7 @@ import (
 	"iter"
 	"log"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 	"uuid"
@@ -56,6 +57,15 @@ func (s *Service) createProfile(ctx context.Context, id uuid.UUID) (iter.Seq[eve
 	}
 
 	if err != nil {
+		return nil, err
+	}
+
+	p, err := s.getProfile(ctx, id)
+	if err == nil {
+		return slices.Values([]event{{Phase: Done, Profile: &p}}), nil
+	}
+
+	if !errors.Is(err, pgx.ErrNoRows) {
 		return nil, err
 	}
 
