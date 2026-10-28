@@ -154,14 +154,7 @@ async def pick_many(
     done = bucket.list_ids(bucket_name, s3, PREFIX)
     sem = asyncio.Semaphore(10)
 
-    async with httpx.AsyncClient(
-        timeout=15,
-        follow_redirects=True,
-        headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
-        },
-    ) as http:
+    async with client() as http:
         tasks = [
             pick(
                 bucket_name, photos_bucket, s3, nebius, http, sem, system, schema, place
@@ -171,6 +164,17 @@ async def pick_many(
         ]
         log.info("picking photos for %d places", len(tasks))
         await asyncio.gather(*tasks)
+
+
+def client() -> httpx.AsyncClient:
+    return httpx.AsyncClient(
+        timeout=15,
+        follow_redirects=True,
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
+        },
+    )
 
 
 async def _candidates(

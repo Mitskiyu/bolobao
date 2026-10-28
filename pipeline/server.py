@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 import boto3
+import httpx
 from botocore.config import Config
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
@@ -19,7 +20,7 @@ from psycopg_pool import ConnectionPool
 from pydantic import BaseModel
 from tavily import AsyncTavilyClient
 
-from bolobao import bucket, database, judge, model, prompts, sources
+from bolobao import bucket, database, judge, model, photos, prompts, sources
 from bolobao.judge import Verdict
 from bolobao.model import Output
 from bolobao.places import Place
@@ -30,13 +31,16 @@ log = logging.getLogger(__name__)
 @dataclass(frozen=True, kw_only=True, slots=True)
 class Deps:
     bucket_name: str
+    photos_bucket: str
     s3: S3Client
     tavily: AsyncTavilyClient
     nebius: AsyncOpenAI
+    http: httpx.AsyncClient
     pool: ConnectionPool
     enrich: tuple[str, JSONSchema]
     check: tuple[str, JSONSchema]
     rate: tuple[str, JSONSchema]
+    photo: tuple[str, JSONSchema]
 
 
 Phase = Literal["read", "wrote", "checked", "done", "refused", "failed"]
@@ -58,30 +62,34 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpx2").setLevel(logging.WARNING)
 
-    app.state.deps = Deps(
-        bucket_name=os.environ["S3_BUCKET"],
-        s3=boto3.client("s3", config=Config(max_pool_connections=32)),
-        tavily=AsyncTavilyClient(os.environ["TAVILY_KEY"]),
-        nebius=AsyncOpenAI(
-            base_url="https://api.tokenfactory.us-central1.nebius.com/v1/",
-            api_key=os.environ["NEBIUS_KEY"],
-        ),
-        pool=ConnectionPool(
-            kwargs={
-                "user": os.environ["PG_USER"],
-                "password": os.environ["PG_PASSWORD"],
-                "host": os.environ["PG_HOST"],
-                "port": os.environ["PG_PORT"],
-                "dbname": os.environ["PG_NAME"],
-            },
-            max_size=5,
-        ),
-        enrich=prompts.load("enrich"),
-        check=prompts.load("check"),
-        rate=prompts.load("rate"),
-    )
+    async with photos.client() as http:
+        app.state.deps = Deps(
+            bucket_name=os.environ["S3_BUCKET"],
+            photos_bucket=os.environ["S3_BUCKET_PHOTOS"],
+            s3=boto3.client("s3", config=Config(max_pool_connections=32)),
+            tavily=AsyncTavilyClient(os.environ["TAVILY_KEY"]),
+            nebius=AsyncOpenAI(
+                base_url="https://api.tokenfactory.nebius.com/v1/",
+                api_key=os.environ["NEBIUS_KEY"],
+            ),
+            http=http,
+            pool=ConnectionPool(
+                kwargs={
+                    "user": os.environ["PG_USER"],
+                    "password": os.environ["PG_PASSWORD"],
+                    "host": os.environ["PG_HOST"],
+                    "port": os.environ["PG_PORT"],
+                    "dbname": os.environ["PG_NAME"],
+                },
+                max_size=5,
+            ),
+            enrich=prompts.load("enrich"),
+            check=prompts.load("check"),
+            rate=prompts.load("rate"),
+            photo=prompts.load("photo"),
+        )
 
-    yield
+        yield
 
 
 app = FastAPI(lifespan=lifespan)
@@ -141,11 +149,32 @@ async def create_profile(fsq_id: str, request: Request):
 
         yield event("checked")
 
-        profiles = database.profiles([place], {fsq_id: output}, {fsq_id: verdict}, {})
-        if not profiles:
+        outputs = {fsq_id: output}
+        verdicts = {fsq_id: verdict}
+        if not database.profiles([place], outputs, verdicts, {}):
             yield event("refused")
             return
 
+        photo_key = f"{photos.PREFIX}{fsq_id}.json"
+        photo: photos.Photo | None = await load_json(deps, photo_key)
+        if photo is None:
+            await photos.pick(
+                deps.bucket_name,
+                deps.photos_bucket,
+                deps.s3,
+                deps.nebius,
+                deps.http,
+                sem,
+                *deps.photo,
+                place,
+            )
+            photo = await load_json(deps, photo_key)
+
+        photo_urls = {}
+        if photo is not None and photo["index"] is not None:
+            photo_urls[fsq_id] = photos.url(deps.photos_bucket, fsq_id)
+
+        profiles = database.profiles([place], outputs, verdicts, photo_urls)
         await asyncio.to_thread(save_profiles, deps.pool, profiles)
         yield event("done")
 
