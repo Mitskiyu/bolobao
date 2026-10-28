@@ -167,7 +167,7 @@ struct Writing: View {
         write: idle,
         outcome: .done(Restaurant.sample)
     )
-    .environment(SavedStore())
+    .environment(SavedStore(folder: nil))
 }
 
 #Preview("Refused") {

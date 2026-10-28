@@ -7,10 +7,10 @@ final class SavedStore {
 
     private(set) var restaurants: [Restaurant] = []
 
-    private let url = URL.applicationSupportDirectory
-        .appending(path: "saved.json")
+    private let url: URL?
 
-    init() {
+    init(folder: URL? = .applicationSupportDirectory) {
+        url = folder?.appending(path: "saved.json")
         load()
     }
 
@@ -30,12 +30,13 @@ final class SavedStore {
     }
 
     private func load() {
-        guard let data = try? Data(contentsOf: url) else { return }
+        guard let url, let data = try? Data(contentsOf: url) else { return }
         restaurants =
             (try? JSONDecoder().decode([Restaurant].self, from: data)) ?? []
     }
 
     private func write() {
+        guard let url else { return }
         try? FileManager.default.createDirectory(
             at: url.deletingLastPathComponent(),
             withIntermediateDirectories: true

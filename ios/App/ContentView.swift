@@ -14,7 +14,7 @@ struct ContentView: View {
             ZStack {
                 discovery
                 if tab == .saved {
-                    Color.surface
+                    Saved()
                 }
             }
             TabBar(selected: isAdding ? .add : tab) { selected in
@@ -40,5 +40,5 @@ struct ContentView: View {
             cursor == nil ? Restaurant.samples : []
         })
     )
-    .environment(SavedStore())
+    .environment(SavedStore(folder: nil))
 }

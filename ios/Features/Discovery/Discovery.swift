@@ -229,7 +229,7 @@ struct Discovery: View {
 
 #Preview {
     Discovery(fetch: { cursor, _ in cursor == nil ? Restaurant.samples : [] })
-        .environment(SavedStore())
+        .environment(SavedStore(folder: nil))
 }
 
 private struct SlipStamp: View {
