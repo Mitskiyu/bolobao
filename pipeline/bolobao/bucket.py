@@ -49,6 +49,18 @@ def put_json(bucket_name: str, s3: S3Client, key: str, data: object) -> bool:
     return True
 
 
+def put_bytes(
+    bucket_name: str, s3: S3Client, key: str, data: bytes, content_type: str
+) -> bool:
+    try:
+        s3.put_object(Bucket=bucket_name, Key=key, Body=data, ContentType=content_type)
+    except ClientError as e:
+        log.error("failed to upload %s: %s", key, e)
+        return False
+
+    return True
+
+
 def get_json(bucket_name: str, s3: S3Client, key: str) -> Any:
     obj = s3.get_object(Bucket=bucket_name, Key=key)
     return json.loads(obj["Body"].read())

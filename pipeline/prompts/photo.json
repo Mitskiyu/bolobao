@@ -1,0 +1,13 @@
+{
+  "name": "photo",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "reason": { "type": "string" },
+      "image": { "type": "integer" }
+    },
+    "required": ["reason", "image"],
+    "additionalProperties": false
+  }
+}

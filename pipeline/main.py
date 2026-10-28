@@ -18,6 +18,7 @@ from bolobao import (
     database,
     judge,
     model,
+    photos,
     places,
     prompts,
     sources,
@@ -33,6 +34,7 @@ async def main():
     tavily_key = os.environ["TAVILY_KEY"]
     nebius_key = os.environ["NEBIUS_KEY"]
     bucket_name = os.environ["S3_BUCKET"]
+    photos_bucket = os.environ["S3_BUCKET_PHOTOS"]
     user = os.environ["PG_USER"]
     password = os.environ["PG_PASSWORD"]
     host = os.environ["PG_HOST"]
@@ -71,9 +73,10 @@ async def main():
     enrich_system, enrich_schema = prompts.load("enrich")
     check_system, check_schema = prompts.load("check")
     rate_system, rate_schema = prompts.load("rate")
+    photo_system, photo_schema = prompts.load("photo")
 
     nebius = AsyncOpenAI(
-        base_url="https://api.tokenfactory.us-central1.nebius.com/v1/",
+        base_url="https://api.tokenfactory.nebius.com/v1/",
         api_key=nebius_key,
     )
     await model.enrich_many(
@@ -96,10 +99,22 @@ async def main():
     judged = bucket.list_ids(bucket_name, s3, judge.PREFIX)
     verdicts = bucket.get_json_many(bucket_name, s3, judge.PREFIX, list(judged))
 
+    unique = list({p.id: p for p in hk_places + all_places}.values())
+    deck = {p.fsq_id for p in database.profiles(unique, outputs, verdicts)}
+
+    await photos.pick_many(
+        bucket_name,
+        photos_bucket,
+        s3,
+        nebius,
+        photo_system,
+        photo_schema,
+        [p for p in unique if p.id in deck],
+    )
+
     with psycopg.connect(
         user=user, password=password, host=host, port=port, dbname=name
     ) as con:
-        unique = list({p.id: p for p in hk_places + all_places}.values())
         database.upsert_restaurants(con, database.restaurants(unique))
         database.upsert_profiles(con, database.profiles(unique, outputs, verdicts))
 

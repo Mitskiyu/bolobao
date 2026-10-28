@@ -12,6 +12,7 @@ from openai import (
     InternalServerError,
     RateLimitError,
 )
+from openai.types.chat import ChatCompletionContentPartParam
 from openai.types.shared_params.response_format_json_schema import (
     JSONSchema,
     ResponseFormatJSONSchema,
@@ -142,7 +143,7 @@ async def complete(
     name: str,
     system: str,
     schema: JSONSchema,
-    message: str,
+    message: str | list[ChatCompletionContentPartParam],
     label: str,
     *,
     temperature: float,
