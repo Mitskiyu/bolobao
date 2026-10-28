@@ -19,8 +19,8 @@ struct Writing: View {
     @State var phase: Phase? = nil
     @State var outcome: Outcome = .writing
     @State private var attempt = 0
-    @State private var isSaved = false
 
+    @Environment(SavedStore.self) private var saved
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -35,7 +35,13 @@ struct Writing: View {
                 Steps(phase: phase)
             case .done(let restaurant):
                 Slip(restaurant: restaurant, showsAddress: true)
-                DoneBar(isSaved: $isSaved) {
+                DoneBar(isSaved: saved.contains(restaurant)) {
+                    if saved.contains(restaurant) {
+                        saved.remove(restaurant)
+                    } else {
+                        saved.save(restaurant)
+                    }
+                } openMaps: {
                     openURL(restaurant.mapsURL)
                 }
             case .refused:
@@ -161,6 +167,7 @@ struct Writing: View {
         write: idle,
         outcome: .done(Restaurant.sample)
     )
+    .environment(SavedStore())
 }
 
 #Preview("Refused") {

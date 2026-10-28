@@ -4,7 +4,6 @@ import SwiftUI
 struct Discovery: View {
 
     @State private var restaurants: [Restaurant] = []
-    @State private var saved: [Restaurant] = []
     @State private var cursor: String? = nil
     @State private var isLoading: Bool = false
     @State private var isDone: Bool = false
@@ -15,6 +14,8 @@ struct Discovery: View {
     @State private var dragSave = false
     @State private var tapOpacity: CGFloat = 0
     @State private var tapScale: CGFloat = 1.5
+
+    @Environment(SavedStore.self) private var saved
 
     var fetch: (_ cursor: String?, _ limit: Int?) async throws -> [Restaurant] =
         {
@@ -54,7 +55,7 @@ struct Discovery: View {
         guard let first = restaurants.first else {
             return
         }
-        saved.append(first)
+        saved.save(first)
         restaurants.removeFirst()
 
         refill()
@@ -228,6 +229,7 @@ struct Discovery: View {
 
 #Preview {
     Discovery(fetch: { cursor, _ in cursor == nil ? Restaurant.samples : [] })
+        .environment(SavedStore())
 }
 
 private struct SlipStamp: View {

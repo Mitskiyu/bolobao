@@ -82,4 +82,5 @@ struct Search: View {
 #Preview {
     Search()
         .background(.surface)
+        .environment(SavedStore())
 }

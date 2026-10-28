@@ -40,4 +40,5 @@ struct ContentView: View {
             cursor == nil ? Restaurant.samples : []
         })
     )
+    .environment(SavedStore())
 }

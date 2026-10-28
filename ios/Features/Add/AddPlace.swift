@@ -28,5 +28,6 @@ struct AddPlace: View {
     Color.canvas
         .sheet(isPresented: .constant(true)) {
             AddPlace()
+                .environment(SavedStore())
         }
 }
