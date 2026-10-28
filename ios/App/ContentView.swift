@@ -41,4 +41,5 @@ struct ContentView: View {
         })
     )
     .environment(SavedStore(folder: nil))
+    .environment(SeenStore(folder: nil))
 }

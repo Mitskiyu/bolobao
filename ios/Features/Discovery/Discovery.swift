@@ -16,6 +16,7 @@ struct Discovery: View {
     @State private var tapScale: CGFloat = 1.5
 
     @Environment(SavedStore.self) private var saved
+    @Environment(SeenStore.self) private var seen
 
     var fetch: (_ cursor: String?, _ limit: Int?) async throws -> [Restaurant] =
         {
@@ -31,21 +32,28 @@ struct Discovery: View {
         defer { isLoading = false }
 
         do {
-            let page = try await fetch(cursor, nil)
-            if page.isEmpty {
-                isDone = true
-                return
-            }
+            while restaurants.count < 5 {
+                let page = try await fetch(cursor, nil)
+                if page.isEmpty {
+                    isDone = true
+                    return
+                }
 
-            restaurants.append(contentsOf: page)
-            cursor = page.last?.id
+                cursor = page.last?.id
+                restaurants.append(
+                    contentsOf: page.filter {
+                        !seen.contains($0) && !saved.contains($0)
+                    }
+                )
+            }
         } catch {
             print(error)
         }
     }
 
     private func skip() {
-        guard !restaurants.isEmpty else { return }
+        guard let first = restaurants.first else { return }
+        seen.insert(first)
         restaurants.removeFirst()
 
         refill()
@@ -55,6 +63,7 @@ struct Discovery: View {
         guard let first = restaurants.first else {
             return
         }
+        seen.insert(first)
         saved.save(first)
         restaurants.removeFirst()
 
@@ -230,6 +239,7 @@ struct Discovery: View {
 #Preview {
     Discovery(fetch: { cursor, _ in cursor == nil ? Restaurant.samples : [] })
         .environment(SavedStore(folder: nil))
+        .environment(SeenStore(folder: nil))
 }
 
 private struct SlipStamp: View {
