@@ -6,6 +6,7 @@ struct Slip<Answers: View>: View {
     let place: String
     var address: String?
     var priceLevel: Int?
+    var photoURL: URL?
     var seed = 0
     var status: String?
     var isSwiping = false
@@ -36,15 +37,9 @@ struct Slip<Answers: View>: View {
             .padding(.horizontal, Paper.gutter)
             .frame(height: 56)
 
-            RoundedRectangle(cornerRadius: 3)
-                .fill(.surfaceMuted)
-                .frame(height: 210)
-                .overlay {
-                    Text("Photo")
-                        .font(.small)
-                        .foregroundStyle(.textMuted)
-                }
-                .padding(.horizontal, Paper.gutter)
+            if let photoURL {
+                SlipPhoto(url: photoURL)
+            }
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
@@ -105,6 +100,7 @@ extension Slip where Answers == RestaurantAnswers {
             place: "\(restaurant.category) · \(restaurant.area)",
             address: showsAddress ? restaurant.address : nil,
             priceLevel: restaurant.priceLevel,
+            photoURL: URL(string: restaurant.photoUrl),
             seed: restaurant.seed,
             isSwiping: isSwiping
         ) {

@@ -35,7 +35,8 @@
       ],
       "price_level": 2,
       "lat": 22.33642,
-      "lon": 114.146865
+      "lon": 114.146865,
+      "photo_url": "https://bolobao-photos.s3.eu-central-1.amazonaws.com/v1/6651bf32d520d934b4902073.jpg"
     },
     {
       "id": "01a1629b-35cd-7fb7-b8b9-a1a14d82526f",
@@ -72,7 +73,8 @@
       ],
       "price_level": null,
       "lat": 22.337406608495648,
-      "lon": 114.17406662236701
+      "lon": 114.17406662236701,
+      "photo_url": ""
     },
     {
       "id": "01a1629b-35d0-7046-b840-eb0a253358df",
@@ -104,7 +106,8 @@
       ],
       "price_level": null,
       "lat": 22.336132,
-      "lon": 114.166639
+      "lon": 114.166639,
+      "photo_url": "https://bolobao-photos.s3.eu-central-1.amazonaws.com/v1/699847d62a38056c23c49943.jpg"
     },
     {
       "id": "01a1629b-35df-76d2-80cc-8a5a8b97d106",
@@ -126,7 +129,8 @@
       ],
       "price_level": null,
       "lat": 22.328727,
-      "lon": 114.16176
+      "lon": 114.16176,
+      "photo_url": ""
     },
     {
       "id": "01a1629b-35e0-7d58-844a-ca64ba030683",
@@ -163,7 +167,8 @@
       ],
       "price_level": 2,
       "lat": 22.327924,
-      "lon": 114.16413
+      "lon": 114.16413,
+      "photo_url": "https://bolobao-photos.s3.eu-central-1.amazonaws.com/v1/68f229b2d5e89b025a202ade.jpg"
     },
     {
       "id": "01a1629b-35d1-7f95-84e8-aa040064bd8d",
@@ -200,7 +205,8 @@
       ],
       "price_level": 4,
       "lat": 22.334122,
-      "lon": 114.161936
+      "lon": 114.161936,
+      "photo_url": "https://bolobao-photos.s3.eu-central-1.amazonaws.com/v1/695f5d53bfe20c5c7bcb09a6.jpg"
     }
   ]
 }
