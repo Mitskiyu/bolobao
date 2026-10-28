@@ -14,7 +14,7 @@ from bolobao import areas, bucket, model, sources
 from bolobao.model import Answer, Output
 from bolobao.places import Place
 
-PREFIX = f"verdicts/v9/{model.VERSION}/"
+PREFIX = f"verdicts/v10/{model.VERSION}/"
 
 log = logging.getLogger(__name__)
 

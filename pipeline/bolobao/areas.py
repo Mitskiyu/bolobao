@@ -8,6 +8,9 @@ AREA_ZH: dict[str, dict[str, str]] = json.loads(
     (Path(__file__).parent / "areas.json").read_text()
 )
 DISTRICTS = list(AREA_ZH)
+SUB_DISTRICTS: dict[str, list[str]] = json.loads(
+    (Path(__file__).parent / "districts.json").read_text()
+)
 
 
 def zh(place: Place) -> str:
@@ -18,6 +21,12 @@ def zh(place: Place) -> str:
 def en(place: Place) -> str:
     key = _normalize(place)
     return capwords(key) if key else place.district.removesuffix(" District")
+
+
+def district(place: Place) -> str:
+    name = place.district.removesuffix(" District")
+    subs = SUB_DISTRICTS.get(place.district)
+    return f"{name} ({', '.join(subs)})" if subs else name
 
 
 def _normalize(place: Place) -> str | None:

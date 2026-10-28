@@ -20,7 +20,7 @@ from openai.types.shared_params.response_format_json_schema import (
 from bolobao import areas, bucket, sources
 from bolobao.places import Place
 
-VERSION = "v7"
+VERSION = "v8"
 PREFIX = f"outputs/{VERSION}/"
 
 log = logging.getLogger(__name__)
@@ -40,7 +40,11 @@ class Output(TypedDict):
 
 
 def compose(place: Place, sources: dict[str, Any]) -> str | None:
-    lines = [f"NAME: {place.name}", f"AREA: {areas.en(place)}"]
+    lines = [
+        f"NAME: {place.name}",
+        f"AREA: {areas.en(place)}",
+        f"DISTRICT: {areas.district(place)}",
+    ]
     if place.address:
         lines.append(f"ADDRESS: {place.address}")
 

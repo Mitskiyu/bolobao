@@ -14,7 +14,7 @@ Then decide which sources are about this restaurant:
 - One source about this restaurant at this address is enough for a match.
 - If this restaurant has no address, it is a match only if the sources describe a single restaurant with this name in this area. If they describe several, it is not a match.
 
-Sham Shui Po includes Cheung Sha Wan, Lai Chi Kok, Shek Kip Mei, Mei Foo, Nam Cheong and Yau Yat Chuen. A source naming any of these is in this area.
+The DISTRICT line lists the neighbourhoods in this restaurant's district. A source naming any of them is in this area.
 
 It is not a match if:
 - no source is about this restaurant at this address
