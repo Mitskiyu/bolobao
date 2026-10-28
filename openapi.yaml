@@ -182,7 +182,18 @@ components:
     restaurantProfile:
       type: object
       required:
-        [id, name, category, address, area, lat, lon, price_level, answers]
+        [
+          id,
+          name,
+          category,
+          address,
+          area,
+          lat,
+          lon,
+          price_level,
+          photo_url,
+          answers,
+        ]
       properties:
         id:
           type: string
@@ -205,6 +216,8 @@ components:
           type: [integer, "null"]
           minimum: 1
           maximum: 4
+        photo_url:
+          type: string
         answers:
           type: array
           items:

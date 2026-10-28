@@ -15,7 +15,7 @@ import (
 const getProfile = `-- name: GetProfile :one
 SELECT
     r.id, r.name, r.category, r.address, r.area,
-    p.answers, p.score, p.price_level, r.lat, r.lon
+    p.answers, p.score, p.price_level, p.photo_url, r.lat, r.lon
 FROM restaurants r
 JOIN restaurant_profiles p ON p.restaurant_id = r.id
 WHERE r.id = $1
@@ -30,6 +30,7 @@ type GetProfileRow struct {
 	Answers    []byte
 	Score      float64
 	PriceLevel pgtype.Int4
+	PhotoUrl   string
 	Lat        float64
 	Lon        float64
 }
@@ -46,6 +47,7 @@ func (q *Queries) GetProfile(ctx context.Context, id uuid.UUID) (GetProfileRow, 
 		&i.Answers,
 		&i.Score,
 		&i.PriceLevel,
+		&i.PhotoUrl,
 		&i.Lat,
 		&i.Lon,
 	)
@@ -61,7 +63,7 @@ WITH cur AS (
 
 SELECT
     r.id, r.name, r.category, r.address, r.area,
-    p.answers, p.score, p.price_level, r.lat, r.lon
+    p.answers, p.score, p.price_level, p.photo_url, r.lat, r.lon
 FROM restaurants r
 JOIN restaurant_profiles p ON p.restaurant_id = r.id
 LEFT JOIN cur ON true
@@ -87,6 +89,7 @@ type ListProfilesRow struct {
 	Answers    []byte
 	Score      float64
 	PriceLevel pgtype.Int4
+	PhotoUrl   string
 	Lat        float64
 	Lon        float64
 }
@@ -109,6 +112,7 @@ func (q *Queries) ListProfiles(ctx context.Context, arg ListProfilesParams) ([]L
 			&i.Answers,
 			&i.Score,
 			&i.PriceLevel,
+			&i.PhotoUrl,
 			&i.Lat,
 			&i.Lon,
 		); err != nil {

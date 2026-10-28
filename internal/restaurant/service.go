@@ -176,6 +176,7 @@ func fromRow(row database.ListProfilesRow) (profile, error) {
 		Category: row.Category,
 		Address:  row.Address,
 		Area:     row.Area,
+		PhotoUrl: row.PhotoUrl,
 		Lat:      row.Lat,
 		Lon:      row.Lon,
 	}

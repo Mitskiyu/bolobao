@@ -10,6 +10,7 @@ type profile struct {
 	Area       string    `json:"area"`
 	Answers    []answer  `json:"answers"`
 	PriceLevel *int      `json:"price_level"`
+	PhotoUrl   string    `json:"photo_url"`
 	Lat        float64   `json:"lat"`
 	Lon        float64   `json:"lon"`
 }

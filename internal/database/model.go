@@ -31,6 +31,7 @@ type RestaurantProfile struct {
 	Answers      []byte
 	Score        float64
 	PriceLevel   pgtype.Int4
+	PhotoUrl     string
 	CreatedAt    pgtype.Timestamptz
 	ModifiedAt   pgtype.Timestamptz
 }

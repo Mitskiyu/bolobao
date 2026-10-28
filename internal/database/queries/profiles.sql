@@ -1,7 +1,7 @@
 -- name: GetProfile :one
 SELECT
     r.id, r.name, r.category, r.address, r.area,
-    p.answers, p.score, p.price_level, r.lat, r.lon
+    p.answers, p.score, p.price_level, p.photo_url, r.lat, r.lon
 FROM restaurants r
 JOIN restaurant_profiles p ON p.restaurant_id = r.id
 WHERE r.id = $1;
@@ -15,7 +15,7 @@ WITH cur AS (
 
 SELECT
     r.id, r.name, r.category, r.address, r.area,
-    p.answers, p.score, p.price_level, r.lat, r.lon
+    p.answers, p.score, p.price_level, p.photo_url, r.lat, r.lon
 FROM restaurants r
 JOIN restaurant_profiles p ON p.restaurant_id = r.id
 LEFT JOIN cur ON true
