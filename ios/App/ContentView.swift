@@ -7,40 +7,45 @@ struct ContentView: View {
     @State private var tab: TabBar.Tab = .deck
     @State private var isAdding = false
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
+    @State private var showsWelcome = !UserDefaults.standard.bool(
+        forKey: "hasSeenWelcome"
+    )
 
     var body: some View {
-        VStack(spacing: 0) {
-            TopBar()
-                .zIndex(1)
-            ZStack {
-                discovery
-                if tab == .saved {
-                    Saved()
+        ZStack {
+            VStack(spacing: 0) {
+                TopBar()
+                    .zIndex(1)
+                ZStack {
+                    discovery
+                    if tab == .saved {
+                        Saved()
+                    }
+                }
+                TabBar(selected: isAdding ? .add : tab) { selected in
+                    if selected == .add {
+                        isAdding = true
+                    } else {
+                        tab = selected
+                    }
                 }
             }
-            TabBar(selected: isAdding ? .add : tab) { selected in
-                if selected == .add {
-                    isAdding = true
-                } else {
-                    tab = selected
-                }
+            .background(alignment: .top) {
+                Color.topBar.ignoresSafeArea()
             }
-        }
-        .background(alignment: .top) {
-            Color.topBar.ignoresSafeArea()
+            if showsWelcome {
+                Welcome {
+                    hasSeenWelcome = true
+                    withAnimation(.easeIn(duration: 0.35).delay(0.12)) {
+                        showsWelcome = false
+                    }
+                }
+                .transition(.move(edge: .top))
+                .zIndex(2)
+            }
         }
         .sheet(isPresented: $isAdding) {
             AddPlace()
-        }
-        .overlay {
-            if !hasSeenWelcome {
-                Welcome {
-                    withAnimation(.easeOut(duration: 0.25)) {
-                        hasSeenWelcome = true
-                    }
-                }
-                .transition(.opacity)
-            }
         }
     }
 }
