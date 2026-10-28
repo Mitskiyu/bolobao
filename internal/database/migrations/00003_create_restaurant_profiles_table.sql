@@ -5,6 +5,7 @@ CREATE TABLE restaurant_profiles (
     answers       JSONB NOT NULL,
     score         FLOAT NOT NULL DEFAULT 0,
     price_level   INT CHECK (price_level BETWEEN 1 AND 4),
+    photo_url     TEXT NOT NULL DEFAULT '',
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
     modified_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );

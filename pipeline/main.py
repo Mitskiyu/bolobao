@@ -100,7 +100,7 @@ async def main():
     verdicts = bucket.get_json_many(bucket_name, s3, judge.PREFIX, list(judged))
 
     unique = list({p.id: p for p in hk_places + all_places}.values())
-    deck = {p.fsq_id for p in database.profiles(unique, outputs, verdicts)}
+    deck = {p.fsq_id for p in database.profiles(unique, outputs, verdicts, {})}
 
     await photos.pick_many(
         bucket_name,
@@ -112,11 +112,21 @@ async def main():
         [p for p in unique if p.id in deck],
     )
 
+    picked = bucket.list_ids(bucket_name, s3, photos.PREFIX)
+    picks = bucket.get_json_many(bucket_name, s3, photos.PREFIX, list(picked))
+    photo_urls = {
+        place_id: photos.url(photos_bucket, place_id)
+        for place_id, photo in picks.items()
+        if photo["index"] is not None
+    }
+
     with psycopg.connect(
         user=user, password=password, host=host, port=port, dbname=name
     ) as con:
         database.upsert_restaurants(con, database.restaurants(unique))
-        database.upsert_profiles(con, database.profiles(unique, outputs, verdicts))
+        database.upsert_profiles(
+            con, database.profiles(unique, outputs, verdicts, photo_urls)
+        )
 
 
 def snapshot(

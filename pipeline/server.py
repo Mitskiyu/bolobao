@@ -141,7 +141,7 @@ async def create_profile(fsq_id: str, request: Request):
 
         yield event("checked")
 
-        profiles = database.profiles([place], {fsq_id: output}, {fsq_id: verdict})
+        profiles = database.profiles([place], {fsq_id: output}, {fsq_id: verdict}, {})
         if not profiles:
             yield event("refused")
             return

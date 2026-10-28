@@ -48,6 +48,12 @@ class Photo(TypedDict):
     reason: str
 
 
+def url(photos_bucket: str, place_id: str) -> str:
+    return (
+        f"https://{photos_bucket}.s3.eu-central-1.amazonaws.com/{IMAGES}{place_id}.jpg"
+    )
+
+
 def compose(
     place: Place, cands: list[Candidate]
 ) -> list[ChatCompletionContentPartParam]:

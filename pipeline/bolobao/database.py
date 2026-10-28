@@ -30,6 +30,7 @@ class Profile(NamedTuple):
     answers: Jsonb
     price_level: int | None
     score: float
+    photo_url: str
 
 
 log = logging.getLogger(__name__)
@@ -65,7 +66,10 @@ def restaurants(places: list[Place]) -> list[Restaurant]:
 
 
 def profiles(
-    places: list[Place], outputs: dict[str, Output], verdicts: dict[str, Verdict]
+    places: list[Place],
+    outputs: dict[str, Output],
+    verdicts: dict[str, Verdict],
+    photo_urls: dict[str, str],
 ) -> list[Profile]:
     out: list[Profile] = []
 
@@ -90,6 +94,7 @@ def profiles(
                 if verdict["price_supported"]
                 else None,
                 score=verdict["score"],
+                photo_url=photo_urls.get(place.id, ""),
             )
         )
 
@@ -138,18 +143,20 @@ def upsert_profiles(con: psycopg.Connection, profiles: list[Profile]):
     cur.executemany(
         """
         INSERT INTO restaurant_profiles
-            (restaurant_id, answers, price_level, score)
-        SELECT id, %(answers)s, %(price_level)s, %(score)s
+            (restaurant_id, answers, price_level, score, photo_url)
+        SELECT id, %(answers)s, %(price_level)s, %(score)s, %(photo_url)s
         FROM restaurants
         WHERE fsq_id = %(fsq_id)s
         ON CONFLICT (restaurant_id) DO UPDATE SET
             answers = EXCLUDED.answers,
             price_level = EXCLUDED.price_level,
-            score = EXCLUDED.score
+            score = EXCLUDED.score,
+            photo_url = EXCLUDED.photo_url
         WHERE (restaurant_profiles.answers, restaurant_profiles.price_level,
-            restaurant_profiles.score)
+            restaurant_profiles.score, restaurant_profiles.photo_url)
         IS DISTINCT FROM
-            (EXCLUDED.answers, EXCLUDED.price_level, EXCLUDED.score)
+            (EXCLUDED.answers, EXCLUDED.price_level, EXCLUDED.score,
+            EXCLUDED.photo_url)
         """,
         [p._asdict() for p in profiles],
     )
