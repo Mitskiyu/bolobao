@@ -192,18 +192,6 @@ private let idle:
         AsyncThrowingStream<ProfileEvent, any Error> { _ in }
     }
 
-extension Restaurant {
-
-    fileprivate var mapsURL: URL {
-        var components = URLComponents(string: "https://maps.apple.com/")!
-        components.queryItems = [
-            URLQueryItem(name: "q", value: name),
-            URLQueryItem(name: "ll", value: "\(lat),\(lon)"),
-        ]
-        return components.url!
-    }
-}
-
 private struct VoidStamp: View {
 
     var body: some View {

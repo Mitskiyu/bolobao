@@ -86,3 +86,15 @@ extension Restaurant {
 
     static let sample = samples[0]
 }
+
+extension Restaurant {
+
+    var mapsURL: URL {
+        var components = URLComponents(string: "https://maps.apple.com/")!
+        components.queryItems = [
+            URLQueryItem(name: "q", value: name),
+            URLQueryItem(name: "ll", value: "\(lat),\(lon)"),
+        ]
+        return components.url!
+    }
+}

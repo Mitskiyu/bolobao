@@ -33,6 +33,9 @@ struct Saved: View {
             .padding(.bottom, 20)
         }
         .background(.surface)
+        .sheet(item: $selected) { restaurant in
+            SavedSlip(restaurant: restaurant)
+        }
     }
 }
 
@@ -162,5 +165,32 @@ private struct Empty: View {
         }
         .foregroundStyle(.text)
         .padding(.top, 18)
+    }
+}
+
+private struct SavedSlip: View {
+
+    let restaurant: Restaurant
+
+    @Environment(SavedStore.self) private var saved
+    @Environment(\.openURL) private var openURL
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Slip(restaurant: restaurant, showsAddress: true)
+                .padding(.top, 20)
+            DoneBar(isSaved: saved.contains(restaurant)) {
+                if saved.contains(restaurant) {
+                    saved.remove(restaurant)
+                } else {
+                    saved.save(restaurant)
+                }
+            } openMaps: {
+                openURL(restaurant.mapsURL)
+            }
+        }
+        .presentationBackground(.surface)
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius(20)
     }
 }
