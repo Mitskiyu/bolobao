@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		6D426806306D479200884316 /* bolobao-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D426805306D479200884316 /* bolobao-Info.plist */; };
-		6DF849B130549DD3000BB966 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AC30549DD3000BB966 /* ContentView.swift */; };
-		6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849AE30549DD3000BB966 /* bolobaoApp.swift */; };
 		6DF849B330549DD3000BB966 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DF849AB30549DD3000BB966 /* Assets.xcassets */; };
 		6DF849C730559D51000BB966 /* openapi-generator-config.yaml in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849C530559D51000BB966 /* openapi-generator-config.yaml */; };
 		6DF849C830559D51000BB966 /* openapi.yaml in Sources */ = {isa = PBXBuildFile; fileRef = 6DF849C630559D51000BB966 /* openapi.yaml */; };
@@ -21,8 +19,6 @@
 		6D426805306D479200884316 /* bolobao-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "bolobao-Info.plist"; sourceTree = "<group>"; };
 		6DF8499D30549952000BB966 /* bolobao.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bolobao.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF849AB30549DD3000BB966 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6DF849AC30549DD3000BB966 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		6DF849AE30549DD3000BB966 /* bolobaoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bolobaoApp.swift; sourceTree = "<group>"; };
 		6DF849BF3054C751000BB966 /* Local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig; sourceTree = "<group>"; };
 		6DF849C33054C799000BB966 /* Local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text; path = Local.xcconfig.example; sourceTree = "<group>"; };
 		6DF849C530559D51000BB966 /* openapi-generator-config.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; name = "openapi-generator-config.yaml"; path = "../openapi-generator-config.yaml"; sourceTree = "<group>"; };
@@ -55,6 +51,16 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		6D2A08A23070AE7B004F0DC1 /* UI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UI;
+			sourceTree = "<group>";
+		};
+		6D2A08A23070AE7B004F0DC2 /* App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = App;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,15 +82,15 @@
 				6D231409308A09B200E506C7 /* Fonts */,
 				6D2A08753070A7B6004F0DBE /* Preview Content */,
 				6D2A08543070953F004F0DBE /* Networking */,
+				6D2A08A23070AE7B004F0DC2 /* App */,
 				6D2A08A23070AE7B004F0DBE /* Core */,
+				6D2A08A23070AE7B004F0DC1 /* UI */,
 				6D2A089B3070AE76004F0DBE /* Features */,
 				6DF849C630559D51000BB966 /* openapi.yaml */,
 				6DF849C530559D51000BB966 /* openapi-generator-config.yaml */,
 				6DF849AB30549DD3000BB966 /* Assets.xcassets */,
-				6DF849AC30549DD3000BB966 /* ContentView.swift */,
 				6DF849BF3054C751000BB966 /* Local.xcconfig */,
 				6DF849C33054C799000BB966 /* Local.xcconfig.example */,
-				6DF849AE30549DD3000BB966 /* bolobaoApp.swift */,
 				6D426805306D479200884316 /* bolobao-Info.plist */,
 				6DF8499E30549952000BB966 /* Products */,
 			);
@@ -120,6 +126,8 @@
 				6D2A08753070A7B6004F0DBE /* Preview Content */,
 				6D2A089B3070AE76004F0DBE /* Features */,
 				6D2A08A23070AE7B004F0DBE /* Core */,
+				6D2A08A23070AE7B004F0DC1 /* UI */,
+				6D2A08A23070AE7B004F0DC2 /* App */,
 			);
 			name = bolobao;
 			packageProductDependencies = (
@@ -189,8 +197,6 @@
 			files = (
 				6DF849C730559D51000BB966 /* openapi-generator-config.yaml in Sources */,
 				6DF849C830559D51000BB966 /* openapi.yaml in Sources */,
-				6DF849B130549DD3000BB966 /* ContentView.swift in Sources */,
-				6DF849B230549DD3000BB966 /* bolobaoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
