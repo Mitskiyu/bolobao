@@ -221,7 +221,6 @@ struct Discovery: View {
                     title: "SKIP",
                     color: .textMuted,
                     isFilled: false,
-                    isTinted: !stampSave && stampOpacity >= 1,
                     tilt: -5
                 ) {
                     tap(save: false)
@@ -231,7 +230,6 @@ struct Discovery: View {
                 InkButton(
                     title: "SAVE",
                     isFilled: false,
-                    isTinted: stampSave && stampOpacity >= 1,
                     tilt: 4
                 ) {
                     tap(save: true)
