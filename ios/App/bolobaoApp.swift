@@ -11,6 +11,7 @@ struct bolobaoApp: App {
             memoryCapacity: 50_000_000,
             diskCapacity: 200_000_000
         )
+        UIScrollView.appearance().indicatorStyle = .black
     }
 
     var body: some Scene {
