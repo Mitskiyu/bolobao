@@ -2,7 +2,7 @@ import SwiftUI
 
 extension AttributedString {
 
-    init(handwritten string: String, brush: UIFont) {
+    init(handwritten string: String, brush: UIFont, overhang: CGFloat = 4) {
         self.init(string)
         for index in characters.indices where characters[index].isChinese {
             let next = characters.index(after: index)
@@ -10,7 +10,7 @@ extension AttributedString {
         }
         if !characters.isEmpty {
             let last = characters.index(before: endIndex)
-            self[last..<endIndex].kern = 4
+            self[last..<endIndex].kern = overhang
         }
     }
 }

@@ -6,6 +6,7 @@ struct ContentView: View {
 
     @State private var tab: TabBar.Tab = .deck
     @State private var isAdding = false
+    @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,6 +31,16 @@ struct ContentView: View {
         }
         .sheet(isPresented: $isAdding) {
             AddPlace()
+        }
+        .overlay {
+            if !hasSeenWelcome {
+                Welcome {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        hasSeenWelcome = true
+                    }
+                }
+                .transition(.opacity)
+            }
         }
     }
 }

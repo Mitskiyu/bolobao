@@ -11,6 +11,7 @@ struct Paper: View {
     static let margin = gutter + labelWidth + columnGap / 2
 
     var scrolled: CGFloat = 0
+    var showsMargin = true
 
     var body: some View {
         Canvas { context, size in
@@ -24,6 +25,7 @@ struct Paper: View {
                 rules.addRect(CGRect(x: 0, y: y, width: size.width, height: 1))
             }
             context.fill(rules, with: .color(.rule))
+            guard showsMargin else { return }
 
             let margin = CGRect(
                 x: Paper.margin,

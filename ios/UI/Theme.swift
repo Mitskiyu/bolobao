@@ -3,11 +3,14 @@ import SwiftUI
 extension UIFont {
 
     static let hand = UIFont(name: "Caveat-Bold", size: 24)!
+    static let handLarge = UIFont(name: "Caveat-Bold", size: 32)!
     static let handSmall = UIFont(name: "Caveat-Bold", size: 23)!
     static let brush = UIFont(name: "LXGWWenKaiTC-Bold", size: 22)!
     static let brushSmall = UIFont(name: "LXGWWenKaiTC-Bold", size: 21)!
     static let answer = UIFont(name: "NotoSansHK-Regular", size: 17)!
     static let label = UIFont(name: "NotoSansHK-Bold", size: 11)!
+    static let welcome = UIFont(name: "NotoSansHK-Black", size: 46)!
+    static let printedHeader = UIFont(name: "NotoSansHK-Black", size: 14)!
 }
 
 extension Font {
