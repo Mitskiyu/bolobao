@@ -12,6 +12,7 @@ struct Slip<Answers: View>: View {
     @ViewBuilder let answers: Answers
 
     @State private var scrolled: CGFloat = 0
+    @State private var fits = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -70,7 +71,16 @@ struct Slip<Answers: View>: View {
                 .padding(.horizontal, Paper.gutter)
             }
             .scrollDisabled(isSwiping)
-            .contentMargins(.bottom, 3 * Paper.line, for: .scrollContent)
+            .contentMargins(
+                .bottom,
+                fits ? 0 : 3 * Paper.line,
+                for: .scrollContent
+            )
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.contentSize.height <= geometry.containerSize.height
+            } action: { _, value in
+                fits = value
+            }
             .onScrollGeometryChange(for: CGFloat.self) { geometry in
                 geometry.contentOffset.y + geometry.contentInsets.top
             } action: { _, offset in
