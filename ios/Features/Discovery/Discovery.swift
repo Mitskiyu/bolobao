@@ -237,7 +237,7 @@ private struct SlipStamp: View {
     let scale: CGFloat
 
     var body: some View {
-        Discovery.Stamp(
+        Stamp(
             text: save ? "SAVED" : "SKIPPED",
             color: save ? .accent : .textMuted,
             size: 48,
