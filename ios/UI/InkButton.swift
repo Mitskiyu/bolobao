@@ -6,6 +6,7 @@ struct InkButton: View {
     var icon: Image?
     var color: Color = .accent
     var isFilled = true
+    var isTinted = false
     var tilt: Double = -1.5
     let action: () -> Void
 
@@ -22,6 +23,7 @@ struct InkButton: View {
                     .font(.inkButton)
                     .tracking(2.5)
             }
+            .animation(nil, value: title)
             .foregroundStyle(isFilled ? .surface : color)
             .padding(.horizontal, 28)
             .frame(height: 54)
@@ -38,6 +40,12 @@ struct InkButton: View {
                     .overlay {
                         RoundedRectangle(cornerRadius: 5.5)
                             .fill(isFilled ? color : .surface)
+                            .overlay {
+                                if isTinted {
+                                    RoundedRectangle(cornerRadius: 5.5)
+                                        .fill(color.opacity(0.12))
+                                }
+                            }
                             .padding(
                                 EdgeInsets(
                                     top: 2,
@@ -50,7 +58,15 @@ struct InkButton: View {
             }
             .rotationEffect(.degrees(tilt))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(Pressed())
+    }
+}
+
+private struct Pressed: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .offset(y: configuration.isPressed ? 1 : 0)
     }
 }
 

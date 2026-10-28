@@ -179,6 +179,7 @@ struct Discovery: View {
                 .overlay {
                     SlipStamp(
                         save: stampSave,
+                        seed: restaurant.seed,
                         opacity: isTop ? stampOpacity : 0,
                         scale: stampScale
                     )
@@ -203,21 +204,28 @@ struct Discovery: View {
         .simultaneousGesture(drag)
         .overlay(alignment: .bottom) {
             HStack {
-                Button {
+                InkButton(
+                    title: "SKIP",
+                    color: .textMuted,
+                    isFilled: false,
+                    isTinted: !stampSave && stampOpacity >= 1,
+                    tilt: -5
+                ) {
                     tap(save: false)
-                } label: {
-                    Stamp(text: "SKIP", color: .textMuted, seed: 1)
-                        .rotationEffect(.degrees(-5))
                 }
+                .fixedSize()
                 Spacer()
-                Button {
+                InkButton(
+                    title: "SAVE",
+                    isFilled: false,
+                    isTinted: stampSave && stampOpacity >= 1,
+                    tilt: 4
+                ) {
                     tap(save: true)
-                } label: {
-                    Stamp(text: "SAVE", color: .accent, seed: 2)
-                        .rotationEffect(.degrees(4))
                 }
+                .fixedSize()
             }
-            .buttonStyle(.plain)
+            .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
             .padding(.horizontal, Paper.gutter)
             .padding(.top, 40)
             .padding(.bottom, 8)
@@ -245,6 +253,7 @@ struct Discovery: View {
 private struct SlipStamp: View {
 
     let save: Bool
+    let seed: Int
     let opacity: CGFloat
     let scale: CGFloat
 
@@ -253,11 +262,11 @@ private struct SlipStamp: View {
             text: save ? "SAVED" : "SKIPPED",
             color: save ? .accent : .textMuted,
             size: 48,
-            seed: save ? 3 : 4
+            seed: seed + (save ? 3 : 4)
         )
         .rotationEffect(.degrees(save ? -12 : 10))
         .scaleEffect(scale)
-        .opacity(0.9 * opacity)
+        .opacity(opacity)
         .padding(.top, 104)
         .padding(save ? .leading : .trailing, save ? 40 : 34)
         .frame(

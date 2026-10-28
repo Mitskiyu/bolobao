@@ -13,6 +13,7 @@ struct DoneBar: View {
                     title: isSaved ? "SAVED" : "SAVE",
                     icon: isSaved ? Image(systemName: "checkmark") : nil,
                     isFilled: false,
+                    isTinted: isSaved,
                     tilt: 1.5,
                     action: toggle
                 )
