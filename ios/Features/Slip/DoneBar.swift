@@ -10,6 +10,12 @@ struct DoneBar: View {
         Panel(top: 14) {
             HStack(spacing: 14) {
                 InkButton(
+                    title: "OPEN IN MAPS",
+                    icon: Image(.mapPin),
+                    color: .handwriting,
+                    action: openMaps
+                )
+                InkButton(
                     title: isSaved ? "SAVED" : "SAVE",
                     icon: isSaved ? Image(systemName: "checkmark") : nil,
                     isFilled: false,
@@ -18,12 +24,6 @@ struct DoneBar: View {
                     action: toggle
                 )
                 .frame(width: 150)
-                InkButton(
-                    title: "OPEN IN MAPS",
-                    icon: Image(.mapPin),
-                    color: .handwriting,
-                    action: openMaps
-                )
             }
         }
     }

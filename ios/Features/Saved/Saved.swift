@@ -29,6 +29,7 @@ struct Saved: View {
                     }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, Paper.gutter)
             .padding(.bottom, 20)
         }

@@ -18,9 +18,17 @@ extension Writing {
         var body: some View {
             Panel {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Working on it…")
-                        .font(.hand(28))
-                        .foregroundStyle(.handwriting)
+                    TimelineView(.periodic(from: .now, by: 0.8)) { context in
+                        let step = Int(
+                            context.date.timeIntervalSinceReferenceDate / 0.8
+                        )
+                        Text(
+                            "Working on it"
+                                + String(repeating: ".", count: step % 3 + 1)
+                        )
+                    }
+                    .font(.hand(28))
+                    .foregroundStyle(.handwriting)
                     VStack(alignment: .leading, spacing: 12) {
                         Step(
                             title: "Read what people wrote about it",

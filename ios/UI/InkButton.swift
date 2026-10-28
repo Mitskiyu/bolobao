@@ -67,6 +67,7 @@ private struct Pressed: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .offset(y: configuration.isPressed ? 1 : 0)
+            .transaction { $0.animation = nil }
     }
 }
 
