@@ -24,6 +24,25 @@ struct InkButton: View {
                     .tracking(2.5)
             }
             .animation(nil, value: title)
+        }
+        .buttonStyle(
+            Ink(
+                color: color, isFilled: isFilled, isTinted: isTinted, tilt: tilt
+            )
+        )
+    }
+}
+
+private struct Ink: ButtonStyle {
+
+    let color: Color
+    let isFilled: Bool
+    let isTinted: Bool
+    let tilt: Double
+
+    func makeBody(configuration: Configuration) -> some View {
+        let isPressed = configuration.isPressed
+        return configuration.label
             .foregroundStyle(isFilled ? .surface : color)
             .padding(.horizontal, 28)
             .frame(height: 54)
@@ -41,7 +60,10 @@ struct InkButton: View {
                         RoundedRectangle(cornerRadius: 5.5)
                             .fill(isFilled ? color : .surface)
                             .overlay {
-                                if isTinted {
+                                if isFilled && isPressed {
+                                    RoundedRectangle(cornerRadius: 5.5)
+                                        .fill(.black.opacity(0.12))
+                                } else if !isFilled && (isTinted || isPressed) {
                                     RoundedRectangle(cornerRadius: 5.5)
                                         .fill(color.opacity(0.12))
                                 }
@@ -57,17 +79,8 @@ struct InkButton: View {
                     }
             }
             .rotationEffect(.degrees(tilt))
-        }
-        .buttonStyle(Pressed())
-    }
-}
-
-private struct Pressed: ButtonStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .offset(y: configuration.isPressed ? 1 : 0)
-            .transaction { $0.animation = nil }
+            .offset(y: isPressed ? 1 : 0)
+            .animation(nil, value: isPressed)
     }
 }
 
