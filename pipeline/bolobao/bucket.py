@@ -50,10 +50,21 @@ def put_json(bucket_name: str, s3: S3Client, key: str, data: object) -> bool:
 
 
 def put_bytes(
-    bucket_name: str, s3: S3Client, key: str, data: bytes, content_type: str
+    bucket_name: str,
+    s3: S3Client,
+    key: str,
+    data: bytes,
+    content_type: str,
+    cache_control: str,
 ) -> bool:
     try:
-        s3.put_object(Bucket=bucket_name, Key=key, Body=data, ContentType=content_type)
+        s3.put_object(
+            Bucket=bucket_name,
+            Key=key,
+            Body=data,
+            ContentType=content_type,
+            CacheControl=cache_control,
+        )
     except ClientError as e:
         log.error("failed to upload %s: %s", key, e)
         return False

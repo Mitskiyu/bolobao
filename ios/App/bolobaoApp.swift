@@ -6,6 +6,13 @@ struct bolobaoApp: App {
     @State private var saved = SavedStore()
     @State private var seen = SeenStore()
 
+    init() {
+        URLCache.shared = URLCache(
+            memoryCapacity: 50_000_000,
+            diskCapacity: 200_000_000
+        )
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -14,6 +14,7 @@ struct Discovery: View {
     @State private var dragSave = false
     @State private var tapOpacity: CGFloat = 0
     @State private var tapScale: CGFloat = 1.5
+    @State private var prefetched: Set<String> = []
 
     @Environment(SavedStore.self) private var saved
     @Environment(SeenStore.self) private var seen
@@ -46,6 +47,7 @@ struct Discovery: View {
                     }
                 )
             }
+            prefetch()
         } catch {
             print(error)
         }
@@ -56,6 +58,7 @@ struct Discovery: View {
         seen.insert(first)
         restaurants.removeFirst()
 
+        prefetch()
         refill()
     }
 
@@ -67,7 +70,17 @@ struct Discovery: View {
         saved.save(first)
         restaurants.removeFirst()
 
+        prefetch()
         refill()
+    }
+
+    private func prefetch() {
+        for restaurant in restaurants.prefix(6)
+        where !prefetched.contains(restaurant.photoUrl) {
+            prefetched.insert(restaurant.photoUrl)
+            guard let url = URL(string: restaurant.photoUrl) else { continue }
+            URLSession.shared.dataTask(with: url).resume()
+        }
     }
 
     private func refill() {

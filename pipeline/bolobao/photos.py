@@ -251,7 +251,13 @@ async def _save(
     if jpeg is not None:
         key = f"{IMAGES}{place.id}.jpg"
         if not await asyncio.to_thread(
-            bucket.put_bytes, photos_bucket, s3, key, jpeg, "image/jpeg"
+            bucket.put_bytes,
+            photos_bucket,
+            s3,
+            key,
+            jpeg,
+            "image/jpeg",
+            "public, max-age=31536000, immutable",
         ):
             return
 
