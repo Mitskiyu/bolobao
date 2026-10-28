@@ -15,7 +15,7 @@ struct AddPlace: View {
             .background(.surface)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Place.self) { place in
-                Writing(place: place)
+                Writing(place: place, close: { dismiss() })
             }
         }
         .presentationBackground(.surface)

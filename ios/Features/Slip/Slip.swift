@@ -115,14 +115,28 @@ extension Slip where Answers == RestaurantAnswers {
 
 extension Slip where Answers == PlaceholderAnswers {
 
-    init(place: Place, status: String) {
+    init(writing place: Place) {
+        self.init(
+            name: place.name,
+            place: "\(place.category) · \(place.area)",
+            address: place.address,
+            status: "WRITING…"
+        ) {
+            PlaceholderAnswers()
+        }
+    }
+}
+
+extension Slip where Answers == EmptyView {
+
+    init(place: Place, status: String? = nil) {
         self.init(
             name: place.name,
             place: "\(place.category) · \(place.area)",
             address: place.address,
             status: status
         ) {
-            PlaceholderAnswers()
+            EmptyView()
         }
     }
 }
@@ -172,7 +186,7 @@ struct PlaceholderAnswers: View {
 }
 
 #Preview("Writing") {
-    Slip(place: Place.samples[0], status: "WRITING…")
+    Slip(writing: Place.samples[0])
 }
 
 private struct Row<Content: View>: View {
