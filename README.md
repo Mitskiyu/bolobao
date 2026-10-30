@@ -3,7 +3,7 @@
 </p>
 <h1 align="center">Bolobao</h1>
 <p align="center">
-  Swipe on Hong Kong restaurant slips, based on what people actually wrote about each place
+  Swipe on Hong Kong restaurant profiles, based on what people actually wrote about each place
   <br />
   <a href="https://testflight.apple.com/join/5qfRfknx"><img src="https://img.shields.io/badge/TestFlight-0D96F6?logo=apple&logoColor=white" alt="TestFlight"></a>
 </p>
